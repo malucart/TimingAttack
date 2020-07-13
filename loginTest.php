@@ -13,7 +13,8 @@
     echo "session started ";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      if (check($_POST["username"], "john")) {
+      if (check($_POST["username"], "test")) {
+        sleep(0.005);
         echo "username correct! ";
         if (check($_POST["password"], "12345")) {
           echo "password correct! ";
@@ -30,20 +31,10 @@
 
 
     function check($userInput, $trueValue) {
-      $inputRay = str_split($userInput);
-      $valueRay = str_split($trueValue);
-
-      if (sizeof($inputRay) != sizeOf($valueRay)) {
-        return false;
+      if (hash(md5, $userInput) == hash(md5, $trueValue)) {
+        return true;
       }
-
-      for ($i = 0; $i < sizeof($inputRay); $i++) {
-        if ($inputRay[i] != $valueRay[i]){
-          return false;
-        }
-      }
-
-      return true;
+      return false;
     }
 
   ?>
