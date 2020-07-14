@@ -1,4 +1,4 @@
-from burp import IBurpExtender, IExtensionStateListener, ITab
+from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener
 from javax import swing
 import javax.swing.border.EmptyBorder
 from java.awt import BorderLayout, Color, Font
@@ -9,7 +9,7 @@ except ImportError:
     pass
 
 
-class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
+class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener):
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
@@ -23,6 +23,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # Set our extension name
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
+        self.callbacks.registerProxyListener(self)
 
         self.createGUI()
 
@@ -41,6 +42,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         """Passes the UI to burp"""
         return self.tab
 
+    # Organize GUI code better
     def createGUI(self):
         # Create the tab
         self.tab = swing.JPanel(BorderLayout())
@@ -213,6 +215,10 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
     def timeUserList(self, event):
         self.getListResults.text = self.usernameList.text
         return
+
+    def processProxyMessage(self, messageIsRequest, message):
+        byteray = message.getMessageInfo().getRequest()
+        self.getResults.text = "".join(map(chr, byteray))
 
 try:
     FixBurpExceptions()
