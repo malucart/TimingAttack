@@ -58,7 +58,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # Create page layout box
         boxVertical = swing.Box.createVerticalBox()
 
-        # Create box for top area
+        # Create box for top-half area
         boxHorizontal = swing.Box.createHorizontalBox()
 
         # Create box for top left, which will take in
@@ -70,17 +70,17 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # Enter valid username
         boxHor = swing.Box.createHorizontalBox()
         labelUser = swing.JLabel("Valid username: ")
-        self.enterValidUser = swing.JTextField("", 30)
+        self.validUser = swing.JTextField("", 30)
         boxHor.add(labelUser)
-        boxHor.add(self.enterValidUser)
+        boxHor.add(self.validUser)
         boxVert.add(boxHor)
 
         # Enter invalid username
         boxHor = swing.Box.createHorizontalBox()
         labelUser = swing.JLabel("Invalid username: ")
-        self.enterInvalidUser = swing.JTextField("", 30)
+        self.invalidUser = swing.JTextField("", 30)
         boxHor.add(labelUser)
-        boxHor.add(self.enterInvalidUser)
+        boxHor.add(self.invalidUser)
         boxVert.add(boxHor)
 
         # Submit button
@@ -93,7 +93,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # Create box for top right, which will output
         #  resulting time for each username
         boxVert = swing.Box.createVerticalBox()
-        labelArea = swing.JLabel("Enter a valid and an invalid username")
+        labelArea = swing.JLabel("Results")
         boxVert.add(labelArea)
 
         # Get results area
@@ -110,12 +110,79 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # View result
         boxVertical.add(boxHorizontal)
 
+        # Draw a horizontal line
+        sep = swing.JSeparator()
+        boxVertical.add(sep)
+
+        # Create box for bottom-half area
+        boxHorizontal = swing.Box.createHorizontalBox()
+
+        # Create bottom left box for inputting
+        # a list of usernames (txt file)
+        boxVert = swing.Box.createVerticalBox()
+        labelArea = swing.JLabel("Input Username File")
+        boxVert.add(labelArea)
+
+        # Input usernames file
+        boxHor = swing.Box.createHorizontalBox()
+        labelUser = swing.JLabel("Invalid username: ")
+        self.usernameList = swing.JTextField("", 30)
+        boxHor.add(labelUser)
+        boxHor.add(self.usernameList)
+        boxVert.add(boxHor)
+
+        # Submit button
+        submit = swing.JButton("submit", actionPerformed=self.timeUserList)
+        boxVert.add(submit)
+
+        # Put into lower-half box
+        boxHorizontal.add(boxVert)
+
+        # Create a vertical separator
+        # Not working yet
+        vertsep = swing.JSeparator()
+        boxHorizontal.add(vertsep)
+
+        # Create box for bottom right, which will output
+        #  resulting time for each username
+        boxVert = swing.Box.createVerticalBox()
+        labelArea = swing.JLabel("Results")
+        boxVert.add(labelArea)
+
+        # Get results area
+        self.getListResults = swing.JTextField("", 50)
+        boxVert.add(self.getListResults)
+
+        # Create horizontal box for the two buttons
+        boxHor = swing.Box.createHorizontalBox()
+
+        # Download results button
+        downRes = swing.JButton("Download results")
+        boxHor.add(downRes)
+
+        # View request button
+        viewReq = swing.JButton("View the request")
+        boxHor.add(viewReq)
+
+        # Put buttons box into lower right box
+        boxVert.add(boxHor)
+
+        # Put into lower-half box
+        boxHorizontal.add(boxVert)
+
+        # Put lower-half box into page box
+        boxVertical.add(boxHorizontal)
+
+        # Put page box in the tab
         self.tab.add(boxVertical, BorderLayout.NORTH)
-        # Create top right
         return
 
     def timeTwoUsers(self, event):
-        self.getResults.text = self.enterValidUser.text + " " + self.enterInvalidUser.text
+        self.getResults.text = self.validUser.text + " " + self.invalidUser.text
+        return
+
+    def timeUserList(self, event):
+        self.getListResults.text = self.usernameList.text
         return
 
 try:
