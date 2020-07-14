@@ -70,21 +70,21 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # Enter valid username
         boxHor = swing.Box.createHorizontalBox()
         labelUser = swing.JLabel("Valid username: ")
-        enterUser = swing.JTextField("", 30)
+        self.enterValidUser = swing.JTextField("", 30)
         boxHor.add(labelUser)
-        boxHor.add(enterUser)
+        boxHor.add(self.enterValidUser)
         boxVert.add(boxHor)
 
         # Enter invalid username
         boxHor = swing.Box.createHorizontalBox()
         labelUser = swing.JLabel("Invalid username: ")
-        enterUser = swing.JTextField("", 30)
+        self.enterInvalidUser = swing.JTextField("", 30)
         boxHor.add(labelUser)
-        boxHor.add(enterUser)
+        boxHor.add(self.enterInvalidUser)
         boxVert.add(boxHor)
 
         # Submit button
-        submit = swing.JButton("submit")
+        submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         boxVert.add(submit)
 
         # Put into upper-half box
@@ -97,8 +97,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         boxVert.add(labelArea)
 
         # Get results area
-        getResults = swing.JTextField("", 50)
-        boxVert.add(getResults)
+        self.getResults = swing.JTextField("", 50)
+        boxVert.add(self.getResults)
 
         # View request button
         viewReq = swing.JButton("View the request")
@@ -108,11 +108,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         boxHorizontal.add(boxVert)
 
         # View result
-
         boxVertical.add(boxHorizontal)
 
         self.tab.add(boxVertical, BorderLayout.NORTH)
         # Create top right
+        return
+
+    def timeTwoUsers(self, event):
+        self.getResults.text = self.enterValidUser.text + " " + self.enterInvalidUser.text
         return
 
 try:
