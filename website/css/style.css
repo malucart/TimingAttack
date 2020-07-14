@@ -9,3 +9,8 @@ footer {
     margin-bottom: 50px;
     font-size: 60%;
 }
+
+input[type='submit'],
+label {
+    display: block;
+}
