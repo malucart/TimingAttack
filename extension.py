@@ -55,6 +55,64 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         firstTab.layout = BorderLayout()
         tabbedPane.addTab("1", firstTab)
 
+        # Create page layout box
+        boxVertical = swing.Box.createVerticalBox()
+
+        # Create box for top area
+        boxHorizontal = swing.Box.createHorizontalBox()
+
+        # Create box for top left, which will take in
+        # valid and invalid usernames and have a submit button
+        boxVert = swing.Box.createVerticalBox()
+        labelArea = swing.JLabel("Enter a valid and an invalid username")
+        boxVert.add(labelArea)
+
+        # Enter valid username
+        boxHor = swing.Box.createHorizontalBox()
+        labelUser = swing.JLabel("Valid username: ")
+        enterUser = swing.JTextField("", 30)
+        boxHor.add(labelUser)
+        boxHor.add(enterUser)
+        boxVert.add(boxHor)
+
+        # Enter invalid username
+        boxHor = swing.Box.createHorizontalBox()
+        labelUser = swing.JLabel("Invalid username: ")
+        enterUser = swing.JTextField("", 30)
+        boxHor.add(labelUser)
+        boxHor.add(enterUser)
+        boxVert.add(boxHor)
+
+        # Submit button
+        submit = swing.JButton("submit")
+        boxVert.add(submit)
+
+        # Put into upper-half box
+        boxHorizontal.add(boxVert)
+
+        # Create box for top right, which will output
+        #  resulting time for each username
+        boxVert = swing.Box.createVerticalBox()
+        labelArea = swing.JLabel("Enter a valid and an invalid username")
+        boxVert.add(labelArea)
+
+        # Get results area
+        getResults = swing.JTextField("", 50)
+        boxVert.add(getResults)
+
+        # View request button
+        viewReq = swing.JButton("View the request")
+        boxVert.add(viewReq)
+
+        # Put into upper-half box
+        boxHorizontal.add(boxVert)
+
+        # View result
+
+        boxVertical.add(boxHorizontal)
+
+        self.tab.add(boxVertical, BorderLayout.NORTH)
+        # Create top right
         return
 
 try:
