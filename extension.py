@@ -138,11 +138,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         # Put into lower-half box
         boxHorizontal.add(boxVert)
 
-        # Create a vertical separator
-        # Not working yet
-        vertsep = swing.JSeparator()
-        boxHorizontal.add(vertsep)
-
         # Create box for bottom right, which will output
         #  resulting time for each username
         boxVert = swing.Box.createVerticalBox()
@@ -171,6 +166,17 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab):
         boxHorizontal.add(boxVert)
 
         # Put lower-half box into page box
+        boxVertical.add(boxHorizontal)
+
+        sep = swing.JSeparator()
+        boxVertical.add(sep)
+
+        # Create box for debug output
+        boxHorizontal = swing.Box.createHorizontalBox()
+        labelArea = swing.JLabel("Something went wrong?")
+        boxHorizontal.add(labelArea)
+        viewDeb = swing.JButton("View debug output")
+        boxHorizontal.add(viewDeb)
         boxVertical.add(boxHorizontal)
 
         # Put page box in the tab
