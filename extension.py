@@ -225,28 +225,38 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Get request information
         requestInfo = helpers.analyzeRequest(request)
 
+        # Get name of parameter to change
+        paramName = "username" # This needs to come from a field in the GUI instead
+
         # Check if request contains parameter "username"
         msg = helpers.bytesToString(request)
-        msgsplit = msg.split("username=")
+        msgsplit = msg.split(paramName)
 
         # if request doesn't have username parameter, return error
         if (len(msgsplit) == 1):
-            self.getResults.text = "Error; no username parameter" + requestMethod
+            self.getResults.text = "Error; no " + paramName + " parameter"
 
         # if request has username parameter, change its value
         else:
             # loop through parameters
             for i in requestInfo.getParameters():
                 # find username parameter and change its value
-                if (i.getName() == "username"):
-                    param = helpers.buildParameter("username", "test", i.getType())
-                    request = helpers.updateParameter(request, param)
+                if (i.getName() == paramName):
+                    # Create valid request
+                    validUser = self.validUser.text
+                    validParam = helpers.buildParameter(paramName, validUser, i.getType())
+                    validRequest = helpers.updateParameter(request, validParam)
+                    # Create invalid Request
+                    invalidUser = self.invalidUser.text
+                    invalidParam = helpers.buildParameter(paramName, invalidUser, i.getType())
+                    invalidRequest = helpers.updateParameter(request, invalidParam)
             # Build an http service to send a request to the website
             httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
-            # Send the changed request
-            makeRequest = self.callbacks.makeHttpRequest(httpService, request)
+            # Send the changed requests
+            makeValidRequest = self.callbacks.makeHttpRequest(httpService, validRequest)
+            makeInvalidRequest = self.callbacks.makeHttpRequest(httpService, invalidRequest)
             # Print response to the request in GUI
-            self.getResults.text = helpers.bytesToString(makeRequest.getResponse())
+            self.getResults.text = helpers.bytesToString(makeValidRequest.getResponse()) + helpers.bytesToString(makeInvalidRequest.getResponse())
 try:
     FixBurpExceptions()
 except:
