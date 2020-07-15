@@ -60,3 +60,5 @@ if (isset($_POST['login-submit'])) {
     header("Location: ../index.php");
     exit();
 }
+
+?>
