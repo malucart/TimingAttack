@@ -1,4 +1,4 @@
-from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener
+from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers
 from javax import swing
 import javax.swing.border.EmptyBorder
 from java.awt import BorderLayout, Color, Font
@@ -9,7 +9,7 @@ except ImportError:
     pass
 
 
-class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener):
+class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers):
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
@@ -217,9 +217,36 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener)
         return
 
     def processProxyMessage(self, messageIsRequest, message):
-        byteray = message.getMessageInfo().getRequest()
-        self.getResults.text = "".join(map(chr, byteray))
+        # Keep a reference to helpers
+        helpers = self.callbacks.getHelpers()
 
+        # Get the request
+        request = message.getMessageInfo().getRequest()
+        # Get request information
+        requestInfo = helpers.analyzeRequest(request)
+
+        # Check if request contains parameter "username"
+        msg = helpers.bytesToString(request)
+        msgsplit = msg.split("username=")
+
+        # if request doesn't have username parameter, return error
+        if (len(msgsplit) == 1):
+            self.getResults.text = "Error; no username parameter" + requestMethod
+
+        # if request has username parameter, change its value
+        else:
+            # loop through parameters
+            for i in requestInfo.getParameters():
+                # find username parameter and change its value
+                if (i.getName() == "username"):
+                    param = helpers.buildParameter("username", "test", i.getType())
+                    request = helpers.updateParameter(request, param)
+            # Build an http service to send a request to the website
+            httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
+            # Send the changed request
+            makeRequest = self.callbacks.makeHttpRequest(httpService, request)
+            # Print response to the request in GUI
+            self.getResults.text = helpers.bytesToString(makeRequest.getResponse())
 try:
     FixBurpExceptions()
 except:
