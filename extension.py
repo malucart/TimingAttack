@@ -3,6 +3,7 @@ from javax import swing
 import javax.swing.border.EmptyBorder
 from java.awt import BorderLayout, Color, Font
 import sys
+import time
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
@@ -252,11 +253,16 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
                     invalidRequest = helpers.updateParameter(request, invalidParam)
             # Build an http service to send a request to the website
             httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
-            # Send the changed requests
+            # Time and send the changed request with valid parameter
+            start = time.clock()
             makeValidRequest = self.callbacks.makeHttpRequest(httpService, validRequest)
+            valid_time = time.clock() - start
+            # Time and send the changed request with invalid parameter
+            start = time.clock()
             makeInvalidRequest = self.callbacks.makeHttpRequest(httpService, invalidRequest)
+            invalid_time = time.clock() - start
             # Print response to the request in GUI
-            self.getResults.text = helpers.bytesToString(makeValidRequest.getResponse()) + helpers.bytesToString(makeInvalidRequest.getResponse())
+            self.getResults.text = "valid time" + str(valid_time) + " invalid time " + str(invalid_time)
 try:
     FixBurpExceptions()
 except:
