@@ -4,6 +4,9 @@ import javax.swing.border.EmptyBorder
 from java.awt import BorderLayout, Color, Font
 import sys
 import time
+import threading
+import threading
+
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
@@ -25,6 +28,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
         self.callbacks.registerProxyListener(self)
+
+        self.curRequest = None
 
         self.createGUI()
 
@@ -210,7 +215,50 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         return
 
     def timeTwoUsers(self, event):
-        self.getResults.text = self.validUser.text + " " + self.invalidUser.text
+        if (self.curRequest == None):
+            return
+
+        threading.Thread(target=self.dothis).start()
+
+        return
+
+    def dothis(self):
+        # Keep a reference to helpers
+        helpers = self.callbacks.getHelpers()
+
+        # Get the request
+        request = self.curRequest.getMessageInfo().getRequest()
+        # Get request information
+        requestInfo = helpers.analyzeRequest(request)
+
+        # Get name of parameter to change
+        paramName = "username" # This needs to come from a field in the GUI instead
+
+        # loop through parameters
+        for i in requestInfo.getParameters():
+            # find username parameter and change its value
+            if (i.getName() == paramName):
+                # Create valid request
+                validUser = self.validUser.text
+                validParam = helpers.buildParameter(paramName, validUser, i.getType())
+                validRequest = helpers.updateParameter(request, validParam)
+                # Create invalid Request
+                invalidUser = self.invalidUser.text
+                invalidParam = helpers.buildParameter(paramName, invalidUser, i.getType())
+                invalidRequest = helpers.updateParameter(request, invalidParam)
+
+        # Build an http service to send a request to the website
+        httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
+        # Time and send the changed request with valid parameter
+        start = time.clock()
+        makeValidRequest = self.callbacks.makeHttpRequest(httpService, validRequest)
+        valid_time = time.clock() - start
+        # Time and send the changed request with invalid parameter
+        start = time.clock()
+        makeInvalidRequest = self.callbacks.makeHttpRequest(httpService, invalidRequest)
+        invalid_time = time.clock() - start
+        # Print response to the request in GUI
+        self.getResults.text = "valid time" + str(valid_time) + " invalid time " + str(invalid_time)
         return
 
     def timeUserList(self, event):
@@ -234,35 +282,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         msgsplit = msg.split(paramName)
 
         # if request doesn't have username parameter, return error
-        if (len(msgsplit) == 1):
-            self.getResults.text = "Error; no " + paramName + " parameter"
+        if (len(msgsplit) > 1):
+            self.curRequest = message
 
-        # if request has username parameter, change its value
-        else:
-            # loop through parameters
-            for i in requestInfo.getParameters():
-                # find username parameter and change its value
-                if (i.getName() == paramName):
-                    # Create valid request
-                    validUser = self.validUser.text
-                    validParam = helpers.buildParameter(paramName, validUser, i.getType())
-                    validRequest = helpers.updateParameter(request, validParam)
-                    # Create invalid Request
-                    invalidUser = self.invalidUser.text
-                    invalidParam = helpers.buildParameter(paramName, invalidUser, i.getType())
-                    invalidRequest = helpers.updateParameter(request, invalidParam)
-            # Build an http service to send a request to the website
-            httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
-            # Time and send the changed request with valid parameter
-            start = time.clock()
-            makeValidRequest = self.callbacks.makeHttpRequest(httpService, validRequest)
-            valid_time = time.clock() - start
-            # Time and send the changed request with invalid parameter
-            start = time.clock()
-            makeInvalidRequest = self.callbacks.makeHttpRequest(httpService, invalidRequest)
-            invalid_time = time.clock() - start
-            # Print response to the request in GUI
-            self.getResults.text = "valid time" + str(valid_time) + " invalid time " + str(invalid_time)
 try:
     FixBurpExceptions()
 except:
