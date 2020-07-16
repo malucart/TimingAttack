@@ -5,8 +5,6 @@ from java.awt import BorderLayout, Color, Font
 import sys
 import time
 import threading
-import threading
-
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
@@ -98,6 +96,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(labelUser)
         boxHor.add(self.invalidUser)
+        boxVert.add(boxHor)
+
+        # Enter parameter name
+        boxHor = swing.Box.createHorizontalBox()
+        labelUser = swing.JLabel("Enter parameter : ")
+        self.parameterName = swing.JTextField("", 30)
+        boxHor.add(labelUser)
+        boxHor.add(self.parameterName)
         boxVert.add(boxHor)
 
         # Submit button
@@ -231,9 +237,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Get request information
         requestInfo = helpers.analyzeRequest(request)
 
-        # Get name of parameter to change
-        paramName = "username" # This needs to come from a field in the GUI instead
-
+        paramName = self.parameterName.text
         # loop through parameters
         for i in requestInfo.getParameters():
             # find username parameter and change its value
@@ -275,15 +279,17 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         requestInfo = helpers.analyzeRequest(request)
 
         # Get name of parameter to change
-        paramName = "username" # This needs to come from a field in the GUI instead
+        paramName = self.parameterName.text # This needs to come from a field in the GUI instead
 
-        # Check if request contains parameter "username"
-        msg = helpers.bytesToString(request)
-        msgsplit = msg.split(paramName)
+        # If param is valid
+        if (len(paramName) >= 1):
+            # Check if request contains parameter "username"
+            msg = helpers.bytesToString(request)
+            msgsplit = msg.split()
 
-        # if request doesn't have username parameter, return error
-        if (len(msgsplit) > 1):
-            self.curRequest = message
+            # if request doesn't have username parameter, return error
+            if (len(msgsplit) > 1):
+                self.curRequest = message
 
 try:
     FixBurpExceptions()
