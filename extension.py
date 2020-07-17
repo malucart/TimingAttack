@@ -139,6 +139,19 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxHor.add(self.inputFile)
         boxVert.add(boxHor)
 
+        # Input username separator
+        boxHor = swing.Box.createHorizontalBox()
+        self.addLabel("Enter parameter separator: ", boxHor)
+        self.paramSeparator = swing.JTextField("", 30)
+        boxHor.add(self.paramSeparator)
+        boxVert.add(boxHor)
+
+        # Input parameter name
+        boxHor = swing.Box.createHorizontalBox()
+        self.addLabel("Enter parameter: ", boxHor)
+        self.fileParameterName = swing.JTextField("", 30)
+        boxHor.add(self.fileParameterName)
+        boxVert.add(boxHor)
 
         # Submit button
         submit = swing.JButton("submit", actionPerformed=self.timeUserList)
