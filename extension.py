@@ -6,6 +6,7 @@ from java.awt import BorderLayout, Color, Font
 import sys
 import time
 import threading
+import java.util.Scanner as Scanner
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
@@ -242,12 +243,46 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
     def timeTwoUsers(self, event):
         if (self.curRequest == None):
             return
-
-        threading.Thread(target=self.getValidInvalidTimes).start()
-
+        threading.Thread(target=self.getTwoUserTimes).start()
         return
 
-    def getValidInvalidTimes(self):
+    def getTwoUserTimes(self):
+        self.getResults.text = "Valid username: " + self.validUser.text + " "
+        self.getResults.text += str(self.getTime(self.validUser.text))
+        self.getResults.text += "Invalid username: " + self.invalidUser.text + " "
+        self.getResults.text += str(self.getTime(self.invalidUser.text))
+
+    def timeUserList(self, event):
+        if (self.curRequest == None):
+            return
+        try:
+            # Choose file
+            file = self.chooser.getSelectedFile()
+            self.getListResults.text = file.getName()
+            self.fileSubmitError.text = ""
+
+            # Read file
+            scan = Scanner(file)
+            readFile = ""
+            while scan.hasNext():
+                readFile += scan.nextLine()
+
+            # Divide file into list of usernames
+            self.userList = readFile.split(self.paramSeparator.text)
+
+            # Get time for each username
+            threading.Thread(target=self.getUserListTimes).start()
+        except:
+           self.fileSubmitError.text = "No File Submitted"
+        return
+
+    def getUserListTimes(self):
+        for i in self.userList:
+            self.getListResults.text += "Username: " + i + " Time: "
+            self.getListResults.text += str(self.getTime(i)) + " "
+        return
+
+    def getTime(self, paramInput):
         # Keep a reference to helpers
         helpers = self.callbacks.getHelpers()
 
@@ -261,36 +296,18 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         for i in requestInfo.getParameters():
             # find username parameter and change its value
             if (i.getName() == paramName):
-                # Create valid request
-                validUser = self.validUser.text
-                validParam = helpers.buildParameter(paramName, validUser, i.getType())
-                validRequest = helpers.updateParameter(request, validParam)
-                # Create invalid Request
-                invalidUser = self.invalidUser.text
-                invalidParam = helpers.buildParameter(paramName, invalidUser, i.getType())
-                invalidRequest = helpers.updateParameter(request, invalidParam)
+                # Create request
+                buildParam = helpers.buildParameter(paramName, paramInput, i.getType())
+                newRequest = helpers.updateParameter(request, buildParam)
 
         # Build an http service to send a request to the website
         httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
         # Time and send the changed request with valid parameter
         start = time.clock()
-        makeValidRequest = self.callbacks.makeHttpRequest(httpService, validRequest)
-        valid_time = time.clock() - start
-        # Time and send the changed request with invalid parameter
-        start = time.clock()
-        makeInvalidRequest = self.callbacks.makeHttpRequest(httpService, invalidRequest)
-        invalid_time = time.clock() - start
+        makeRequest = self.callbacks.makeHttpRequest(httpService, newRequest)
+        getTime = time.clock() - start
         # Print response to the request in GUI
-        self.getResults.text = "valid time" + str(valid_time) + " invalid time " + str(invalid_time)
-        return
-
-    def timeUserList(self, event):
-        try:
-            file = self.chooser.getSelectedFile()
-            self.getListResults.text = file.getName()
-        except:
-            self.fileSubmitError.text = "No File Submitted"
-        return
+        return getTime
 
     def processProxyMessage(self, messageIsRequest, message):
         # Keep a reference to helpers
