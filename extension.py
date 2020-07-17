@@ -1,6 +1,7 @@
 from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers
 from javax import swing
 import javax.swing.border.EmptyBorder
+import javax.swing.filechooser.FileNameExtensionFilter
 from java.awt import BorderLayout, Color, Font
 import sys
 import time
@@ -134,13 +135,16 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Input usernames file
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Input file: ", boxHor)
-        self.usernameList = swing.JTextField("", 30)
-        boxHor.add(self.usernameList)
+        self.inputFile = swing.JButton("Choose file...", actionPerformed=self.chooseFile)
+        boxHor.add(self.inputFile)
         boxVert.add(boxHor)
+
 
         # Submit button
         submit = swing.JButton("submit", actionPerformed=self.timeUserList)
+        self.fileSubmitError = swing.JLabel("")
         boxVert.add(submit)
+        boxVert.add(self.fileSubmitError)
 
         # Put into lower-half box
         boxHorizontal.add(boxVert)
@@ -213,15 +217,24 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         box.add(labelArea)
         return
 
+    def chooseFile(self, event):
+        self.chooser = swing.JFileChooser()
+        fileextensions = ["txt", "jason"]
+        filter = swing.filechooser.FileNameExtensionFilter("TXT & JSON FILES", fileextensions)
+        self.chooser.setFileFilter(filter)
+        returnVal = self.chooser.showOpenDialog(self.chooser)
+        if(returnVal == swing.JFileChooser.APPROVE_OPTION):
+            self.inputFile.text = self.chooser.getSelectedFile().getName()
+
     def timeTwoUsers(self, event):
         if (self.curRequest == None):
             return
 
-        threading.Thread(target=self.dothis).start()
+        threading.Thread(target=self.getValidInvalidTimes).start()
 
         return
 
-    def dothis(self):
+    def getValidInvalidTimes(self):
         # Keep a reference to helpers
         helpers = self.callbacks.getHelpers()
 
@@ -259,7 +272,11 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         return
 
     def timeUserList(self, event):
-        self.getListResults.text = self.usernameList.text
+        try:
+            file = self.chooser.getSelectedFile()
+            self.getListResults.text = file.getName()
+        except:
+            self.fileSubmitError.text = "No File Submitted"
         return
 
     def processProxyMessage(self, messageIsRequest, message):
