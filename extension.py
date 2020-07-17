@@ -51,11 +51,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Create the tab
         self.tab = swing.JPanel(BorderLayout())
 
-        # Create orange color variable
-        orange = Color(16737843)
-        # Create font for titles
-        titlefont = Font("Tahoma", 1, 14)
-
         # Created a tabbed pane to go in the top of the
         # main tab, below the text area
         tabbedPane = swing.JTabbedPane()
@@ -74,35 +69,27 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # Create box for top left, which will take in
         # valid and invalid usernames and have a submit button
-        boxVert = swing.Box.createVerticalBox()
-        bord = swing.border.EmptyBorder(10, 10, 10, 10)
-        boxVert.setBorder(bord)
-        labelArea = swing.JLabel("Enter a valid and an invalid username")
-        labelArea.setForeground(orange);
-        labelArea.setFont(titlefont);
-        boxVert.add(labelArea, BorderLayout.LINE_START)
+        boxVert = self.getBorderVertBox()
+        self.addTitle("Enter a valid and an invalid username", boxVert)
 
         # Enter valid username
         boxHor = swing.Box.createHorizontalBox()
-        labelUser = swing.JLabel("Valid username:   ")
+        self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
-        boxHor.add(labelUser)
         boxHor.add(self.validUser)
         boxVert.add(boxHor)
 
         # Enter invalid username
         boxHor = swing.Box.createHorizontalBox()
-        labelUser = swing.JLabel("Invalid username: ")
+        self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
-        boxHor.add(labelUser)
         boxHor.add(self.invalidUser)
         boxVert.add(boxHor)
 
         # Enter parameter name
         boxHor = swing.Box.createHorizontalBox()
-        labelUser = swing.JLabel("Enter parameter : ")
+        self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
-        boxHor.add(labelUser)
         boxHor.add(self.parameterName)
         boxVert.add(boxHor)
 
@@ -115,13 +102,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # Create box for top right, which will output
         #  resulting time for each username
-        boxVert = swing.Box.createVerticalBox()
-        bord = swing.border.EmptyBorder(10, 10, 10, 10)
-        boxVert.setBorder(bord)
-        labelArea = swing.JLabel("Results")
-        labelArea.setForeground(orange);
-        labelArea.setFont(titlefont);
-        boxVert.add(labelArea)
+        boxVert = self.getBorderVertBox()
+        self.addTitle("Results", boxVert)
 
         # Get results area
         self.getResults = swing.JTextField("", 50)
@@ -146,19 +128,13 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # Create bottom left box for inputting
         # a list of usernames (txt file)
-        boxVert = swing.Box.createVerticalBox()
-        bord = swing.border.EmptyBorder(10, 10, 10, 10)
-        boxVert.setBorder(bord)
-        labelArea = swing.JLabel("Input Username File")
-        labelArea.setForeground(orange);
-        labelArea.setFont(titlefont);
-        boxVert.add(labelArea)
+        boxVert = self.getBorderVertBox()
+        self.addTitle("Input Username File", boxVert)
 
         # Input usernames file
         boxHor = swing.Box.createHorizontalBox()
-        labelUser = swing.JLabel("Invalid username: ")
+        self.addLabel("Input file: ", boxHor)
         self.usernameList = swing.JTextField("", 30)
-        boxHor.add(labelUser)
         boxHor.add(self.usernameList)
         boxVert.add(boxHor)
 
@@ -171,13 +147,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # Create box for bottom right, which will output
         #  resulting time for each username
-        boxVert = swing.Box.createVerticalBox()
-        bord = swing.border.EmptyBorder(10, 10, 10, 10)
-        boxVert.setBorder(bord)
-        labelArea = swing.JLabel("Results")
-        labelArea.setForeground(orange);
-        labelArea.setFont(titlefont);
-        boxVert.add(labelArea)
+        boxVert = self.getBorderVertBox()
+        self.addTitle("Results", boxVert)
 
         # Get results area
         self.getListResults = swing.JTextField("", 50)
@@ -207,17 +178,39 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxVertical.add(sep)
 
         # Create box for debug output
+        boxVert = self.getBorderVertBox()
         boxHorizontal = swing.Box.createHorizontalBox()
-        bord = swing.border.EmptyBorder(10, 10, 10, 10)
-        boxHorizontal.setBorder(bord)
-        labelArea = swing.JLabel("Something went wrong?")
-        boxHorizontal.add(labelArea)
+        self.addLabel("Something went wrong?", boxHorizontal)
         viewDeb = swing.JButton("View debug output")
         boxHorizontal.add(viewDeb)
-        boxVertical.add(boxHorizontal)
+        boxVert.add(boxHorizontal)
+        boxVertical.add(boxVert)
 
         # Put page box in the tab
         firstTab.add(boxVertical)
+        return
+
+    def getBorderVertBox(self):
+        boxVert = swing.Box.createVerticalBox()
+        bord = swing.border.EmptyBorder(10, 10, 10, 10)
+        boxVert.setBorder(bord)
+        return boxVert
+
+    def addLabel(self, text, box):
+        labelArea = swing.JLabel(text)
+        box.add(labelArea)
+        return
+
+    def addTitle(self, text, box):
+        # Create orange color variable
+        orange = Color(16737843)
+        # Create font for titles
+        titlefont = Font("Tahoma", 1, 14)
+        # Create title
+        labelArea = swing.JLabel(text)
+        labelArea.setForeground(orange);
+        labelArea.setFont(titlefont);
+        box.add(labelArea)
         return
 
     def timeTwoUsers(self, event):
@@ -279,17 +272,13 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         requestInfo = helpers.analyzeRequest(request)
 
         # Get name of parameter to change
-        paramName = self.parameterName.text # This needs to come from a field in the GUI instead
+        paramName = self.parameterName.text
 
-        # If param is valid
-        if (len(paramName) >= 1):
-            # Check if request contains parameter "username"
-            msg = helpers.bytesToString(request)
-            msgsplit = msg.split()
-
-            # if request doesn't have username parameter, return error
-            if (len(msgsplit) > 1):
+        # Check if request has specified parameter
+        for i in requestInfo.getParameters():
+            if (i.getName() == paramName):
                 self.curRequest = message
+                return
 
 try:
     FixBurpExceptions()
