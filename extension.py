@@ -7,6 +7,8 @@ import sys
 import time
 import threading
 import java.util.Scanner as Scanner
+import os
+
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
@@ -112,7 +114,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxVert.add(self.getResults)
 
         # View request button
-        viewReq = swing.JButton("View the request")
+        self.showRequestIsOn = False
+        viewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
+        # viewReq = swing.JButton("View the request")
         boxVert.add(viewReq)
 
         # Put into upper-half box
@@ -176,7 +180,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxHor = swing.Box.createHorizontalBox()
 
         # Download results button
-        downRes = swing.JButton("Download results")
+        downRes = swing.JButton("Download results", actionPerformed=self.downloadResults)
         boxHor.add(downRes)
 
         # View request button
@@ -248,7 +252,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
     def getTwoUserTimes(self):
         self.getResults.text = "Valid username: " + self.validUser.text + " "
-        self.getResults.text += str(self.getTime(self.validUser.text))
+        self.getResults.text += str(self.getTime(self.validUser.text)) + "\n"
         self.getResults.text += "Invalid username: " + self.invalidUser.text + " "
         self.getResults.text += str(self.getTime(self.invalidUser.text))
 
@@ -279,8 +283,20 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
     def getUserListTimes(self):
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
-            self.getListResults.text += str(self.getTime(i)) + " "
+            self.getListResults.text += str(self.getTime(i)) + "\n"
         return
+
+
+    def showRequest(self, event):
+        if (self.showRequestIsOn):
+            self.showRequestIsOn = False
+            # if (self.curRequest != None):
+                # threading.Thread(target=self.getTwoUserTimes).start()
+        else:
+            self.showRequestIsOn = True
+            helpers = self.callbacks.getHelpers()
+            self.getResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
+
 
     def getTime(self, paramInput):
         # Keep a reference to helpers
@@ -309,6 +325,25 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Print response to the request in GUI
         return getTime
 
+    def downloadResults(self, event):
+        if (self.getListResults.text == ""):
+            return
+        file = open(get_download_path() + "/downloadresults.txt", "w")
+        file.write(self.getListResults.text)
+        file.close()
+
+    def get_download_path():
+        """Returns the default downloads path for linux or windows"""
+        if os.name == 'nt':
+            import winreg
+            sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
+            downloads_guid = '{374DE290-123F-4565-9164-39C4925E467B}'
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
+                location = winreg.QueryValueEx(key, downloads_guid)[0]
+            return location
+        else:
+            return os.path.join(os.path.expanduser('~'), 'downloads')
+
     def processProxyMessage(self, messageIsRequest, message):
         # Keep a reference to helpers
         helpers = self.callbacks.getHelpers()
@@ -320,7 +355,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # Get name of parameter to change
         paramName = self.parameterName.text
-
         # Check if request has specified parameter
         for i in requestInfo.getParameters():
             if (i.getName() == paramName):
