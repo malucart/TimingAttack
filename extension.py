@@ -110,14 +110,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.addTitle("Results", boxVert)
 
         # Get results area
-        self.getResults = swing.JTextField("", 50)
+        self.getResults = swing.JTextArea("", 50, 30)
         boxVert.add(self.getResults)
 
         # View request button
         self.showRequestIsOn = False
-        viewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
-        # viewReq = swing.JButton("View the request")
-        boxVert.add(viewReq)
+        self.twoUserResultOutput = ""
+        self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
+        boxVert.add(self.twoUserViewReq)
 
         # Put into upper-half box
         boxHorizontal.add(boxVert)
@@ -173,7 +173,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.addTitle("Results", boxVert)
 
         # Get results area
-        self.getListResults = swing.JTextField("", 50)
+        self.getListResults = swing.JTextArea("", 50, 30)
         boxVert.add(self.getListResults)
 
         # Create horizontal box for the two buttons
@@ -184,8 +184,10 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxHor.add(downRes)
 
         # View request button
-        viewReq = swing.JButton("View the request")
-        boxHor.add(viewReq)
+        self.showListRequestIsOn = False
+        self.listResultOutput = ""
+        self.listViewReq = swing.JButton("View the request", actionPerformed=self.showListRequest)
+        boxHor.add(self.listViewReq)
 
         # Put buttons box into lower right box
         boxVert.add(boxHor)
@@ -262,7 +264,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         try:
             # Choose file
             file = self.chooser.getSelectedFile()
-            self.getListResults.text = file.getName()
             self.fileSubmitError.text = ""
 
             # Read file
@@ -290,12 +291,28 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
     def showRequest(self, event):
         if (self.showRequestIsOn):
             self.showRequestIsOn = False
-            # if (self.curRequest != None):
-                # threading.Thread(target=self.getTwoUserTimes).start()
+            self.getResults.text = self.twoUserResultOutput
+            self.twoUserViewReq.setText("View the request")
         else:
             self.showRequestIsOn = True
             helpers = self.callbacks.getHelpers()
+            self.twoUserResultOutput = self.getResults.text
             self.getResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
+            self.twoUserViewReq.setText("View results")
+
+    def showListRequest(self, event):
+        if (self.showListRequestIsOn):
+            self.showListRequestIsOn = False
+            self.getListResults.text = self.listResultOutput
+            self.listViewReq.setText("View the request")
+
+        else:
+            self.showListRequestIsOn = True
+            helpers = self.callbacks.getHelpers()
+            self.listResultOutput = self.getListResults.text
+            self.getListResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
+            self.listViewReq.setText("View results")
+
 
 
     def getTime(self, paramInput):
