@@ -105,7 +105,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxHor.add(self.parameterName)
         topleft.add(boxHor)
 
-        # "submit" button
+        # "submit" button and add it on the top-left box
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
@@ -121,7 +121,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.getResults = swing.JTextArea("", 50, 30)
         topright.add(self.getResults)
 
-        # "view the request" button
+        # "view the request" button and add it into the top-right box
         self.showRequestIsOn = False
         self.twoUserResultOutput = ""
         self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
@@ -137,67 +137,66 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         sep = swing.JSeparator()
         pagebox.add(sep)
 
-        # create box for bottom-half area
+        # it creates a box for bottom-half area
         bottomhalf = swing.Box.createHorizontalBox()
 
-        # Create bottom left box for inputting
-        # a list of usernames (txt file)
+        # it creates a bottom-left box to input a list of usernames (txt file)
         bottomleft = self.getBorderVertBox()
+        # title for the bottom-left area
         self.addTitle("Input Username File", bottomleft)
 
-        # Input usernames file
+        # input usernames file into the bottom-left box
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Input file: ", boxHor)
         self.inputFile = swing.JButton("Choose file...", actionPerformed=self.chooseFile)
         boxHor.add(self.inputFile)
         bottomleft.add(boxHor)
 
-        # Input username separator
+        # input username separator and add it on the bottom-left box
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter separator: ", boxHor)
         self.paramSeparator = swing.JTextField("", 30)
         boxHor.add(self.paramSeparator)
         bottomleft.add(boxHor)
 
-        # Input parameter name
+        # input parameter name and add it on the bottom-left box
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.fileParameterName = swing.JTextField("", 30)
         boxHor.add(self.fileParameterName)
         bottomleft.add(boxHor)
 
-        # Submit button
+        # "submit" button and add it on the bottom-left box
         submit = swing.JButton("submit", actionPerformed=self.timeUserList)
         self.fileSubmitError = swing.JLabel("")
         bottomleft.add(submit)
         bottomleft.add(self.fileSubmitError)
 
-        # Put into lower-half box
+        # bottom-left is added into the bottom-half
         bottomhalf.add(bottomleft)
 
-        # Create box for bottom right, which will output
-        #  resulting time for each username
+        # it creates a box for bottom-right that it will result the time for each username from txt file
         bottomright = self.getBorderVertBox()
         self.addTitle("Results", bottomright)
 
-        # Get results area
+        # gets results and adds it on bottom-right
         self.getListResults = swing.JTextArea("", 50, 30)
         bottomright.add(self.getListResults)
 
-        # Create horizontal box for the two buttons
+        # it creates a box for the both buttoms (right and left)
         boxHor = swing.Box.createHorizontalBox()
 
-        # Download results button
+        # user can download results by a button and this button is also saved into the box for the both buttons
         downRes = swing.JButton("Download results", actionPerformed=self.downloadResults)
         boxHor.add(downRes)
 
-        # View request button
+        # "view the request" button, and it is also added on the box for the both buttons
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewReq = swing.JButton("View the request", actionPerformed=self.showListRequest)
         boxHor.add(self.listViewReq)
 
-        # Put buttons box into lower right box
+        # put buttons box into lower right box
         bottomright.add(boxHor)
 
         # Put into lower-half box
@@ -222,6 +221,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         firstTab.add(pagebox)
         return
 
+    # method that creates a box with border
     def getBorderVertBox(self):
         boxVert = swing.Box.createVerticalBox()
         bord = swing.border.EmptyBorder(10, 10, 10, 10)
