@@ -72,34 +72,33 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         tabbedPane.addTab("1", firstTab)
 
         # creation of the whole layout
-        # in brief, vertical boxes start from top to bottom, and horizontal boxes start from left to right.
         # it creates a big box (to put everything inside)
         pagebox = swing.Box.createVerticalBox()
 
-        # Create box for top-half area
+        # create a box for top-half area
         tophalf = swing.Box.createHorizontalBox()
 
-        # it creates a box inside of the top half area, which is going to have a valid username, invalid username,
-        # and parameter from the user, and the button "submit"
+        # it creates a box inside of the top-half area, which is going to have a valid username, an invalid username,
+        # and a parameter from the user, and the button "submit". All this is on the top-left
         topleft = self.getBorderVertBox()
-        # title for the top left area
-        self.addTitle("Enter a valid and an invalid username", topleft)
+        # title for the top-left area
+        self.addTitle("Enter a Valid and an Invalid Username", topleft)
 
-        # box for the valid username and get the data from user
+        # box for the valid username and it gets the data from the user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
         boxHor.add(self.validUser)
         topleft.add(boxHor)
 
-        # box for the invalid username and get the data from user
+        # box for the invalid username and it gets the data from the user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(self.invalidUser)
         topleft.add(boxHor)
 
-        # box for the parameter and get the data from user
+        # box for the parameter and it gets the data from the user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
@@ -110,13 +109,12 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
-        # Put into upper-half box
+        # now as we have everything we want for the top-left, let's add it inside of the top-half
         tophalf.add(topleft)
 
-        # Create box for top right, which will output
-        #  resulting time for each username
+        # it creates a box for top-right
         topright = self.getBorderVertBox()
-        # title for the top right area
+        # title for the top-right area
         self.addTitle("Results", topright)
 
         # gets results
@@ -129,17 +127,17 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
         topright.add(self.twoUserViewReq)
 
-        # Put into upper-half box
+        # now as we have everything we want for the top-right, let's add it inside of the top-half
         tophalf.add(topright)
 
-        # View result
+        # the big box store top-half
         pagebox.add(tophalf)
 
-        # Draw a horizontal line
+        # draw a horizontal line to separate top and bottom and saves it on the big box
         sep = swing.JSeparator()
         pagebox.add(sep)
 
-        # Create box for bottom-half area
+        # create box for bottom-half area
         bottomhalf = swing.Box.createHorizontalBox()
 
         # Create bottom left box for inputting
