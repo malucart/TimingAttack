@@ -190,25 +190,26 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         downRes = swing.JButton("Download results", actionPerformed=self.downloadResults)
         boxHor.add(downRes)
 
-        # "view the request" button, and it is also added on the box for the both buttons
+        # "view the request" button
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewReq = swing.JButton("View the request", actionPerformed=self.showListRequest)
         boxHor.add(self.listViewReq)
 
-        # put buttons box into lower right box
+        # add buttons box into lower right box
         bottomright.add(boxHor)
 
-        # Put into lower-half box
+        # add the buttons in the lower right box into the bottom-half box
         bottomhalf.add(bottomright)
 
-        # Put lower-half box into page box
+        # add bottomo-half box into big box
         pagebox.add(bottomhalf)
 
+        # draw a horizontal line right after the bottom-half box
         sep = swing.JSeparator()
         pagebox.add(sep)
 
-        # Create box for debug output
+        # it creates a box for debug output and adds it on the big box
         debugbox = self.getBorderVertBox()
         horizontaldebug = swing.Box.createHorizontalBox()
         self.addLabel("Something went wrong?", horizontaldebug)
@@ -217,7 +218,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         debugbox.add(horizontaldebug)
         pagebox.add(debugbox)
 
-        # Put page box in the tab
+        # big box is on the tab from the tabbed pane
         firstTab.add(pagebox)
         return
 
@@ -228,11 +229,13 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxVert.setBorder(bord)
         return boxVert
 
+    # method that creates the labels
     def addLabel(self, text, box):
         labelArea = swing.JLabel(text)
         box.add(labelArea)
         return
 
+    # method that add titles for the boxes
     def addTitle(self, text, box):
         # Create orange color variable
         orange = Color(16737843)
@@ -245,6 +248,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         box.add(labelArea)
         return
 
+    # method that allows the user to choose a file
     def chooseFile(self, event):
         self.chooser = swing.JFileChooser()
         fileextensions = ["txt", "jason"]
@@ -254,41 +258,47 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         if(returnVal == swing.JFileChooser.APPROVE_OPTION):
             self.inputFile.text = self.chooser.getSelectedFile().getName()
 
+    # method that gets the time from one valid username and from one invalid username
     def timeTwoUsers(self, event):
         if (self.curRequest == None):
             return
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
+    # method that gets the values from timeTwoUsers() and show them to the user
     def getTwoUserTimes(self):
         self.getResults.text = "Valid username: " + self.validUser.text + " "
         self.getResults.text += str(self.getTime(self.validUser.text)) + "\n"
         self.getResults.text += "Invalid username: " + self.invalidUser.text + " "
         self.getResults.text += str(self.getTime(self.invalidUser.text))
 
+    # method that reads the usernames from a file
     def timeUserList(self, event):
+        # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
             return
         try:
-            # Choose file
+            # stores the file
             file = self.chooser.getSelectedFile()
             self.fileSubmitError.text = ""
 
-            # Read file
+            # reads it
             scan = Scanner(file)
             readFile = ""
             while scan.hasNext():
                 readFile += scan.nextLine()
 
-            # Divide file into list of usernames
+            # divides the file to a list of usernames
             self.userList = readFile.split(self.paramSeparator.text)
 
-            # Get time for each username
+            # gets the time for each username
             threading.Thread(target=self.getUserListTimes).start()
+        # it will handle the error and send a message about it
         except:
            self.fileSubmitError.text = "No File Submitted"
         return
 
+    # method
     def getUserListTimes(self):
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
