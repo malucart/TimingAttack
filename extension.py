@@ -66,115 +66,115 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         tabbedPane.addTab("1", firstTab)
 
         # Create page layout box
-        boxVertical = swing.Box.createVerticalBox()
+        pagebox = swing.Box.createVerticalBox()
 
         # Create box for top-half area
-        boxHorizontal = swing.Box.createHorizontalBox()
+        tophalf = swing.Box.createHorizontalBox()
 
         # Create box for top left, which will take in
         # valid and invalid usernames and have a submit button
-        boxVert = self.getBorderVertBox()
-        self.addTitle("Enter a valid and an invalid username", boxVert)
+        topleft = self.getBorderVertBox()
+        self.addTitle("Enter a valid and an invalid username", topleft)
 
         # Enter valid username
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
         boxHor.add(self.validUser)
-        boxVert.add(boxHor)
+        topleft.add(boxHor)
 
         # Enter invalid username
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(self.invalidUser)
-        boxVert.add(boxHor)
+        topleft.add(boxHor)
 
         # Enter parameter name
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
         boxHor.add(self.parameterName)
-        boxVert.add(boxHor)
+        topleft.add(boxHor)
 
         # Submit button
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
-        boxVert.add(submit)
+        topleft.add(submit)
 
         # Put into upper-half box
-        boxHorizontal.add(boxVert)
+        tophalf.add(topleft)
 
         # Create box for top right, which will output
         #  resulting time for each username
-        boxVert = self.getBorderVertBox()
-        self.addTitle("Results", boxVert)
+        topright = self.getBorderVertBox()
+        self.addTitle("Results", topright)
 
         # Get results area
         self.getResults = swing.JTextArea("", 50, 30)
-        boxVert.add(self.getResults)
+        topright.add(self.getResults)
 
         # View request button
         self.showRequestIsOn = False
         self.twoUserResultOutput = ""
         self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
-        boxVert.add(self.twoUserViewReq)
+        topright.add(self.twoUserViewReq)
 
         # Put into upper-half box
-        boxHorizontal.add(boxVert)
+        tophalf.add(topright)
 
         # View result
-        boxVertical.add(boxHorizontal)
+        pagebox.add(tophalf)
 
         # Draw a horizontal line
         sep = swing.JSeparator()
-        boxVertical.add(sep)
+        pagebox.add(sep)
 
         # Create box for bottom-half area
-        boxHorizontal = swing.Box.createHorizontalBox()
+        bottomhalf = swing.Box.createHorizontalBox()
 
         # Create bottom left box for inputting
         # a list of usernames (txt file)
-        boxVert = self.getBorderVertBox()
-        self.addTitle("Input Username File", boxVert)
+        bottomleft = self.getBorderVertBox()
+        self.addTitle("Input Username File", bottomleft)
 
         # Input usernames file
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Input file: ", boxHor)
         self.inputFile = swing.JButton("Choose file...", actionPerformed=self.chooseFile)
         boxHor.add(self.inputFile)
-        boxVert.add(boxHor)
+        bottomleft.add(boxHor)
 
         # Input username separator
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter separator: ", boxHor)
         self.paramSeparator = swing.JTextField("", 30)
         boxHor.add(self.paramSeparator)
-        boxVert.add(boxHor)
+        bottomleft.add(boxHor)
 
         # Input parameter name
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.fileParameterName = swing.JTextField("", 30)
         boxHor.add(self.fileParameterName)
-        boxVert.add(boxHor)
+        bottomleft.add(boxHor)
 
         # Submit button
         submit = swing.JButton("submit", actionPerformed=self.timeUserList)
         self.fileSubmitError = swing.JLabel("")
-        boxVert.add(submit)
-        boxVert.add(self.fileSubmitError)
+        bottomleft.add(submit)
+        bottomleft.add(self.fileSubmitError)
 
         # Put into lower-half box
-        boxHorizontal.add(boxVert)
+        bottomhalf.add(bottomleft)
 
         # Create box for bottom right, which will output
         #  resulting time for each username
-        boxVert = self.getBorderVertBox()
-        self.addTitle("Results", boxVert)
+        bottomright = self.getBorderVertBox()
+        self.addTitle("Results", bottomright)
 
         # Get results area
         self.getListResults = swing.JTextArea("", 50, 30)
-        boxVert.add(self.getListResults)
+        bottomright.add(self.getListResults)
 
         # Create horizontal box for the two buttons
         boxHor = swing.Box.createHorizontalBox()
@@ -190,28 +190,28 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         boxHor.add(self.listViewReq)
 
         # Put buttons box into lower right box
-        boxVert.add(boxHor)
+        bottomright.add(boxHor)
 
         # Put into lower-half box
-        boxHorizontal.add(boxVert)
+        bottomhalf.add(bottomright)
 
         # Put lower-half box into page box
-        boxVertical.add(boxHorizontal)
+        pagebox.add(bottomhalf)
 
         sep = swing.JSeparator()
-        boxVertical.add(sep)
+        pagebox.add(sep)
 
         # Create box for debug output
-        boxVert = self.getBorderVertBox()
-        boxHorizontal = swing.Box.createHorizontalBox()
-        self.addLabel("Something went wrong?", boxHorizontal)
+        debugbox = self.getBorderVertBox()
+        horizontaldebug = swing.Box.createHorizontalBox()
+        self.addLabel("Something went wrong?", horizontaldebug)
         viewDeb = swing.JButton("View debug output")
-        boxHorizontal.add(viewDeb)
-        boxVert.add(boxHorizontal)
-        boxVertical.add(boxVert)
+        horizontaldebug.add(viewDeb)
+        debugbox.add(horizontaldebug)
+        pagebox.add(debugbox)
 
         # Put page box in the tab
-        firstTab.add(boxVertical)
+        firstTab.add(pagebox)
         return
 
     def getBorderVertBox(self):
