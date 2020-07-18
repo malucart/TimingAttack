@@ -25,18 +25,18 @@ except ImportError:
 
 # main class to connect to burp suite
 class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers):
-    # method that shows the extension is loaded
+    # method that shows if the extension is loaded
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
-        # required for easier debugging:
+        # it is required for easier debugging:
         # https://github.com/securityMB/burp-exceptions
         sys.stdout = callbacks.getStdout()
 
-        # keep a reference to callbacks object
+        # it keeps a reference to callbacks object
         self.callbacks = callbacks
 
-        # set our extension name
+        # sets our extension name
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
         self.callbacks.registerProxyListener(self)
@@ -45,18 +45,18 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         self.createGUI()
 
-        # add the custom tab to our burp suite's UI
+        # adds the custom tab to our burp suite's UI
         callbacks.addSuiteTab(self)
         print "Extension loaded."
         return
 
     # method that implements ITab
     def getTabCaption(self):
-        # return the text to be displayed on the burp suite's new tab
+        # returns the text that is displayed on the burp suite's new tab
         return "Timing Attack"
 
+    # method that passes the UI to burp suite
     def getUiComponent(self):
-        # passes the UI to burp suite
         return self.tab
 
     # method that organizes a better GUI
@@ -64,7 +64,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # create the tab
         self.tab = swing.JPanel(BorderLayout())
 
-        # create a tabbed pane on the top left of the "timing attack" tab (in general, it's going to be numbers)
+        # create a tabbed pane on the top left of the timing attack tab (in general, it's going to be numbers)
+        # it is necessary to open how many timing attack we want but still in the same timing attack tab
         tabbedPane = swing.JTabbedPane()
         self.tab.add(tabbedPane);
         firstTab = swing.JPanel()
@@ -75,53 +76,55 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # it creates a big box (to put everything inside)
         pagebox = swing.Box.createVerticalBox()
 
-        # create a box for top-half area
+        # creates a box for top-half area
         tophalf = swing.Box.createHorizontalBox()
 
-        # it creates a box inside of the top-half area, which is going to have a valid username, an invalid username,
-        # and a parameter from the user, and the button "submit". All this is on the top-left
+        # creates a box inside of the top-half area in the top-left
         topleft = self.getBorderVertBox()
         # title for the top-left area
         self.addTitle("Enter a Valid and an Invalid Username", topleft)
 
-        # box for the valid username and it gets the data from the user
+        # creates a box for a valid username and it gets data from the user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
         boxHor.add(self.validUser)
+        # top-left box adds this box
         topleft.add(boxHor)
 
-        # box for the invalid username and it gets the data from the user
+        # creates a box for a invalid username and it gets data from the user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(self.invalidUser)
+        # top-left box adds this box
         topleft.add(boxHor)
 
-        # box for the parameter and it gets the data from the user
+        # creates a box for the parameter and it gets data from the user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
         boxHor.add(self.parameterName)
+        # top-left box adds this box
         topleft.add(boxHor)
 
-        # "submit" button and add it on the top-left box
+        # "submit" button is created and added into the top-left box
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
         # now as we have everything we want for the top-left, let's add it inside of the top-half
         tophalf.add(topleft)
 
-        # it creates a box for top-right
+        # creates a box inside of the top-half area in the top-right
         topright = self.getBorderVertBox()
         # title for the top-right area
         self.addTitle("Results", topright)
 
-        # gets results
+        # gets results and add them into the top-right box
         self.getResults = swing.JTextArea("", 50, 30)
         topright.add(self.getResults)
 
-        # "view the request" button and add it into the top-right box
+        # "view the request" button is created and added into the top-right box
         self.showRequestIsOn = False
         self.twoUserResultOutput = ""
         self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
@@ -130,112 +133,119 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # now as we have everything we want for the top-right, let's add it inside of the top-half
         tophalf.add(topright)
 
-        # the big box store top-half
+        # as we have everything we want for the top-half, let's add it inside of the big box
         pagebox.add(tophalf)
 
-        # draw a horizontal line to separate top and bottom and saves it on the big box
+        # it draws a horizontal line right after top-half box
         sep = swing.JSeparator()
         pagebox.add(sep)
 
         # it creates a box for bottom-half area
         bottomhalf = swing.Box.createHorizontalBox()
 
-        # it creates a bottom-left box to input a list of usernames (txt file)
+        # it creates a bottom-left box
         bottomleft = self.getBorderVertBox()
         # title for the bottom-left area
         self.addTitle("Input Username File", bottomleft)
 
-        # input usernames file into the bottom-left box
+        # creates a box to input a list of usernames (txt or json file)
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Input file: ", boxHor)
         self.inputFile = swing.JButton("Choose file...", actionPerformed=self.chooseFile)
         boxHor.add(self.inputFile)
+        # bottom-left box adds this box
         bottomleft.add(boxHor)
 
-        # input username separator and add it on the bottom-left box
+        # creates a box to input a parameter separator
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter separator: ", boxHor)
         self.paramSeparator = swing.JTextField("", 30)
         boxHor.add(self.paramSeparator)
+        # bottom-left box adds this box
         bottomleft.add(boxHor)
 
-        # input parameter name and add it on the bottom-left box
+        # creates a box to input a parameter
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.fileParameterName = swing.JTextField("", 30)
         boxHor.add(self.fileParameterName)
+        # bottom-left box adds this box
         bottomleft.add(boxHor)
 
-        # "submit" button and add it on the bottom-left box
+        # "submit" button is created and added into the bottom-left box
         submit = swing.JButton("submit", actionPerformed=self.timeUserList)
         self.fileSubmitError = swing.JLabel("")
         bottomleft.add(submit)
         bottomleft.add(self.fileSubmitError)
 
-        # bottom-left is added into the bottom-half
+        # now as we have everything we want for the bottom-left, let's add it inside of the bottom-half
         bottomhalf.add(bottomleft)
 
-        # it creates a box for bottom-right that it will result the time for each username from txt file
+        # creates a box inside of the bottom-half area in the bottom-right
         bottomright = self.getBorderVertBox()
+        # title for the bottom-right area
         self.addTitle("Results", bottomright)
 
-        # gets results and adds it on bottom-right
+        # gets results about the time for each username from txt/json file and it adds it on bottom-right
         self.getListResults = swing.JTextArea("", 50, 30)
         bottomright.add(self.getListResults)
 
-        # it creates a box for the both buttoms (right and left)
+        # it creates a box to store the buttons funcinalities in the bottom-right area
         boxHor = swing.Box.createHorizontalBox()
 
-        # user can download results by a button and this button is also saved into the box for the both buttons
+        # "download results" button allows the user to download the results because they are stored
+        # into the box which stores the buttons funcinalities
         downRes = swing.JButton("Download results", actionPerformed=self.downloadResults)
         boxHor.add(downRes)
 
-        # "view the request" button
+        # "view the request" button is stored into the box which stores the buttons funcinalities
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewReq = swing.JButton("View the request", actionPerformed=self.showListRequest)
         boxHor.add(self.listViewReq)
 
-        # add buttons box into lower right box
+        # bottom-right box adds the box which stores the buttons funcinalities
         bottomright.add(boxHor)
 
-        # add the buttons in the lower right box into the bottom-half box
+        # now as we have everything we want for the bottom-right, let's add it inside of the bottom-half
         bottomhalf.add(bottomright)
 
-        # add bottomo-half box into big box
+        # as we have everything we want for the bottom-half, let's add it inside of the big box
         pagebox.add(bottomhalf)
 
-        # draw a horizontal line right after the bottom-half box
+        # it draws a horizontal line right after the bottom-half box
         sep = swing.JSeparator()
+        # big box stores this horizontal line
         pagebox.add(sep)
 
-        # it creates a box for debug output and adds it on the big box
+        # it creates a box for debugging output
         debugbox = self.getBorderVertBox()
         horizontaldebug = swing.Box.createHorizontalBox()
         self.addLabel("Something went wrong?", horizontaldebug)
         viewDeb = swing.JButton("View debug output")
         horizontaldebug.add(viewDeb)
         debugbox.add(horizontaldebug)
+        # big box adds this box
         pagebox.add(debugbox)
 
-        # big box is on the tab from the tabbed pane
+        # timing attack tab adds the big box
         firstTab.add(pagebox)
         return
 
-    # method that creates a box with border
+    # method that creates a box without border (we can say that it can be the background box)
     def getBorderVertBox(self):
         boxVert = swing.Box.createVerticalBox()
         bord = swing.border.EmptyBorder(10, 10, 10, 10)
         boxVert.setBorder(bord)
         return boxVert
 
-    # method that creates the labels
+    # method that creates the label/text
     def addLabel(self, text, box):
         labelArea = swing.JLabel(text)
         box.add(labelArea)
         return
 
-    # method that add titles for the boxes
+    # method that add titles for the white boxes
     def addTitle(self, text, box):
         # Create orange color variable
         orange = Color(16737843)
@@ -265,7 +275,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
-    # method that gets the values from timeTwoUsers() and show them to the user
+    # method that shows the time for the user
     def getTwoUserTimes(self):
         self.getResults.text = "Valid username: " + self.validUser.text + " "
         self.getResults.text += str(self.getTime(self.validUser.text)) + "\n"
@@ -298,7 +308,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
            self.fileSubmitError.text = "No File Submitted"
         return
 
-    # method that really gets the time for each username from timeUserList()
+    # method that shows the time from each username for the user
     def getUserListTimes(self):
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
@@ -318,7 +328,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             self.getResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
             self.twoUserViewReq.setText("View results")
 
-    # method that shows that requests from a file of usernames
+    # method that shows the request from a file of usernames
     def showListRequest(self, event):
         if (self.showListRequestIsOn):
             self.showListRequestIsOn = False
@@ -332,11 +342,10 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             self.getListResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
             self.listViewReq.setText("View results")
 
-    # method that is offical to all methods before getting the time from usernames
+    # method that offically gets the time from usernames
     def getTime(self, paramInput):
         # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
-
         # gets the request
         request = self.curRequest.getMessageInfo().getRequest()
         # gets the request information
@@ -360,7 +369,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # prints the response to the GUI
         return getTime
 
-    # method that allows a download for the user
+    # method that allows the user to download
     def downloadResults(self, event):
         if (self.getListResults.text == ""):
             return
@@ -385,12 +394,10 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
     def processProxyMessage(self, messageIsRequest, message):
         # it keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
-
         # gets the request
         request = message.getMessageInfo().getRequest()
         # gets the request information
         requestInfo = helpers.analyzeRequest(request)
-
         # gets name of parameter to change
         paramName = self.parameterName.text
         # checks if request has specified parameter
