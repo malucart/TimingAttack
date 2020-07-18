@@ -1,32 +1,42 @@
+# libraries
+# necessary to connect to burp suite as a extension
 from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers
+# necessary to create graphical user interface (gui) in java
 from javax import swing
 import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 from java.awt import BorderLayout, Color, Font
+# provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
 import sys
+# allow to use the clock time
 import time
+# allow multiple activities within a single process
 import threading
+# allow the user types an input
 import java.util.Scanner as Scanner
+# allow the user download the results, so the program needs to know the path of the download folder to put the file there
 import os
 
+# if something goes wrong
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
     pass
 
-
+# main class to connect to burp suite
 class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers):
+    # method that shows the extension is loaded
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
-        # Required for easier debugging:
+        # required for easier debugging:
         # https://github.com/securityMB/burp-exceptions
         sys.stdout = callbacks.getStdout()
 
-        # Keep a reference to callbacks object
+        # keep a reference to callbacks object
         self.callbacks = callbacks
 
-        # Set our extension name
+        # set our extension name
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
         self.callbacks.registerProxyListener(self)
@@ -35,15 +45,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         self.createGUI()
 
-
-        # Add the custom tab to Burp's UI
+        # add the custom tab to our burp suite's UI
         callbacks.addSuiteTab(self)
         print "Extension loaded."
         return
 
-    # Implement ITab
+    # method that implements ITab
     def getTabCaption(self):
-        """Return the text to be displayed on the tab"""
+        # return the text to be displayed on the burp suite's new tab
         return "Timing Attack"
 
     def getUiComponent(self):
