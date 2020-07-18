@@ -1,32 +1,42 @@
+# libraries
+# necessary to connect to burp suite as a extension
 from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers
+# necessary to create graphical user interface (gui) in java
 from javax import swing
 import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 from java.awt import BorderLayout, Color, Font
+# provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
 import sys
+# allow to use the clock time
 import time
+# allow multiple activities within a single process
 import threading
+# allow the user types an input
 import java.util.Scanner as Scanner
+# allow the user download the results, so the program needs to know the path of the download folder to put the file there
 import os
 
+# if something goes wrong
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
     pass
 
-
+# main class to connect to burp suite
 class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers):
+    # method that shows the extension is loaded
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
-        # Required for easier debugging:
+        # required for easier debugging:
         # https://github.com/securityMB/burp-exceptions
         sys.stdout = callbacks.getStdout()
 
-        # Keep a reference to callbacks object
+        # keep a reference to callbacks object
         self.callbacks = callbacks
 
-        # Set our extension name
+        # set our extension name
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
         self.callbacks.registerProxyListener(self)
@@ -35,69 +45,68 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         self.createGUI()
 
-
-        # Add the custom tab to Burp's UI
+        # add the custom tab to our burp suite's UI
         callbacks.addSuiteTab(self)
         print "Extension loaded."
         return
 
-    # Implement ITab
+    # method that implements ITab
     def getTabCaption(self):
-        """Return the text to be displayed on the tab"""
+        # return the text to be displayed on the burp suite's new tab
         return "Timing Attack"
 
     def getUiComponent(self):
-        """Passes the UI to burp"""
+        # passes the UI to burp suite
         return self.tab
 
-    # Organize GUI code better
+    # method that organizes a better GUI
     def createGUI(self):
-        # Create the tab
+        # create the tab
         self.tab = swing.JPanel(BorderLayout())
 
-        # Created a tabbed pane to go in the top of the
-        # main tab, below the text area
+        # create a tabbed pane on the top left of the "timing attack" tab (in general, it's going to be numbers)
         tabbedPane = swing.JTabbedPane()
         self.tab.add(tabbedPane);
-
-        # First tab
         firstTab = swing.JPanel()
         firstTab.layout = BorderLayout()
         tabbedPane.addTab("1", firstTab)
 
-        # Create page layout box
+        # creation of the whole layout
+        # in brief, vertical boxes start from top to bottom, and horizontal boxes start from left to right.
+        # it creates a big box (to put everything inside)
         pagebox = swing.Box.createVerticalBox()
 
         # Create box for top-half area
         tophalf = swing.Box.createHorizontalBox()
 
-        # Create box for top left, which will take in
-        # valid and invalid usernames and have a submit button
+        # it creates a box inside of the top half area, which is going to have a valid username, invalid username,
+        # and parameter from the user, and the button "submit"
         topleft = self.getBorderVertBox()
+        # title for the top left area
         self.addTitle("Enter a valid and an invalid username", topleft)
 
-        # Enter valid username
+        # box for the valid username and get the data from user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
         boxHor.add(self.validUser)
         topleft.add(boxHor)
 
-        # Enter invalid username
+        # box for the invalid username and get the data from user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(self.invalidUser)
         topleft.add(boxHor)
 
-        # Enter parameter name
+        # box for the parameter and get the data from user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
         boxHor.add(self.parameterName)
         topleft.add(boxHor)
 
-        # Submit button
+        # "submit" button
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
@@ -107,13 +116,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Create box for top right, which will output
         #  resulting time for each username
         topright = self.getBorderVertBox()
+        # title for the top right area
         self.addTitle("Results", topright)
 
-        # Get results area
+        # gets results
         self.getResults = swing.JTextArea("", 50, 30)
         topright.add(self.getResults)
 
-        # View request button
+        # "view the request" button
         self.showRequestIsOn = False
         self.twoUserResultOutput = ""
         self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
