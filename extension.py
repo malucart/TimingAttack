@@ -56,57 +56,56 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         return "Timing Attack"
 
     def getUiComponent(self):
-        """Passes the UI to burp"""
+        # passes the UI to burp suite
         return self.tab
 
-    # Organize GUI code better
+    # method that organizes a better GUI
     def createGUI(self):
-        # Create the tab
+        # create the tab
         self.tab = swing.JPanel(BorderLayout())
 
-        # Created a tabbed pane to go in the top of the
-        # main tab, below the text area
+        # create a tabbed pane on the top left of the "timing attack" tab (in general, it's going to be numbers)
         tabbedPane = swing.JTabbedPane()
         self.tab.add(tabbedPane);
-
-        # First tab
         firstTab = swing.JPanel()
         firstTab.layout = BorderLayout()
         tabbedPane.addTab("1", firstTab)
 
-        # Create page layout box
+        # creation of the whole layout
+        # in brief, vertical boxes start from top to bottom, and horizontal boxes start from left to right.
+        # it creates a big box (to put everything inside)
         boxVertical = swing.Box.createVerticalBox()
 
-        # Create box for top-half area
+        # it creates a top half area inside of the big box
         boxHorizontal = swing.Box.createHorizontalBox()
 
-        # Create box for top left, which will take in
-        # valid and invalid usernames and have a submit button
+        # it creates a box inside of the top half area, which is going to have a valid username, invalid username,
+        # and parameter from the user, and the button "submit"
         boxVert = self.getBorderVertBox()
-        self.addTitle("Enter a valid and an invalid username", boxVert)
+        # title for the top left area
+        self.addTitle("Enter a Valid and an Invalid Username", boxVert)
 
-        # Enter valid username
+        # box for the valid username
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
         boxHor.add(self.validUser)
         boxVert.add(boxHor)
 
-        # Enter invalid username
+         # box for the invalid username
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(self.invalidUser)
         boxVert.add(boxHor)
 
-        # Enter parameter name
+        # box for the parameter
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
         boxHor.add(self.parameterName)
         boxVert.add(boxHor)
 
-        # Submit button
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         boxVert.add(submit)
 
