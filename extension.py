@@ -298,14 +298,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
            self.fileSubmitError.text = "No File Submitted"
         return
 
-    # method
+    # method that really gets the time for each username from timeUserList()
     def getUserListTimes(self):
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
             self.getListResults.text += str(self.getTime(i)) + "\n"
         return
 
-
+    # method that shows the request from one valid username and from one invalid username
     def showRequest(self, event):
         if (self.showRequestIsOn):
             self.showRequestIsOn = False
@@ -318,6 +318,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             self.getResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
             self.twoUserViewReq.setText("View results")
 
+    # method that shows that requests from a file of usernames
     def showListRequest(self, event):
         if (self.showListRequestIsOn):
             self.showListRequestIsOn = False
@@ -331,35 +332,35 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             self.getListResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
             self.listViewReq.setText("View results")
 
-
-
+    # method that is offical to all methods before getting the time from usernames
     def getTime(self, paramInput):
-        # Keep a reference to helpers
+        # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
 
-        # Get the request
+        # gets the request
         request = self.curRequest.getMessageInfo().getRequest()
-        # Get request information
+        # gets the request information
         requestInfo = helpers.analyzeRequest(request)
-
+        # gets the parameter
         paramName = self.parameterName.text
         # loop through parameters
         for i in requestInfo.getParameters():
             # find username parameter and change its value
             if (i.getName() == paramName):
-                # Create request
+                # it creates the request
                 buildParam = helpers.buildParameter(paramName, paramInput, i.getType())
                 newRequest = helpers.updateParameter(request, buildParam)
 
-        # Build an http service to send a request to the website
+        # it builds an http service to send a request to the website
         httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
-        # Time and send the changed request with valid parameter
+        # starts the time and it sends the changed request with valid parameter
         start = time.clock()
         makeRequest = self.callbacks.makeHttpRequest(httpService, newRequest)
         getTime = time.clock() - start
-        # Print response to the request in GUI
+        # prints the response to the GUI
         return getTime
 
+    # method that allows a download for the user
     def downloadResults(self, event):
         if (self.getListResults.text == ""):
             return
@@ -367,8 +368,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         file.write(self.getListResults.text)
         file.close()
 
+    # method that needs to know the path of the download folder to put the file there
     def get_download_path():
-        """Returns the default downloads path for linux or windows"""
+        # returns the default downloads path for linux or windows
         if os.name == 'nt':
             import winreg
             sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
@@ -379,23 +381,25 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         else:
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
+    # method that
     def processProxyMessage(self, messageIsRequest, message):
-        # Keep a reference to helpers
+        # it keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
 
-        # Get the request
+        # gets the request
         request = message.getMessageInfo().getRequest()
-        # Get request information
+        # gets the request information
         requestInfo = helpers.analyzeRequest(request)
 
-        # Get name of parameter to change
+        # gets name of parameter to change
         paramName = self.parameterName.text
-        # Check if request has specified parameter
+        # checks if request has specified parameter
         for i in requestInfo.getParameters():
             if (i.getName() == paramName):
                 self.curRequest = message
                 return
 
+# something went wrong? goes to FixBurpExceptions()
 try:
     FixBurpExceptions()
 except:
