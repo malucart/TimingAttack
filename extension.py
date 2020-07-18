@@ -85,46 +85,45 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # title for the top left area
         self.addTitle("Enter a Valid and an Invalid Username", boxVert)
 
-        # box for the valid username
+        # box for the valid username and get the data from user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
         self.validUser = swing.JTextField("", 30)
         boxHor.add(self.validUser)
         boxVert.add(boxHor)
 
-         # box for the invalid username
+        # box for the invalid username and get the data from user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
         self.invalidUser = swing.JTextField("", 30)
         boxHor.add(self.invalidUser)
         boxVert.add(boxHor)
 
-        # box for the parameter
+        # box for the parameter and get the data from user
         boxHor = swing.Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
         self.parameterName = swing.JTextField("", 30)
         boxHor.add(self.parameterName)
         boxVert.add(boxHor)
 
+        # "submit" button
         submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
         boxVert.add(submit)
 
-        # Put into upper-half box
+        # now it creates a box in the top right area
         boxHorizontal.add(boxVert)
-
-        # Create box for top right, which will output
-        #  resulting time for each username
         boxVert = self.getBorderVertBox()
+        # title for the box
         self.addTitle("Results", boxVert)
 
-        # Get results area
+        # gets results
         self.getResults = swing.JTextArea("", 50, 30)
         boxVert.add(self.getResults)
 
-        # View request button
+        # "view the request" button
         self.showRequestIsOn = False
         self.twoUserResultOutput = ""
-        self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
+        self.twoUserViewReq = swing.JButton("View The Request", actionPerformed=self.showRequest)
         boxVert.add(self.twoUserViewReq)
 
         # Put into upper-half box
