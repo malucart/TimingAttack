@@ -390,7 +390,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         else:
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
-    # method that
+    # method that implements IProxyListener
     def processProxyMessage(self, messageIsRequest, message):
         # it keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
