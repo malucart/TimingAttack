@@ -126,6 +126,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # gets results and add them into the top-right box
         self.getResults = swing.JTextArea("", 50, 30)
+        self.getResults.setEditable(False)
         topright.add(self.getResults)
 
         # "view the request" button is created and added into the top-right box
@@ -192,6 +193,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
         # gets results about the time for each username from txt/json file and it adds it on bottom-right
         self.getListResults = swing.JTextArea("", 50, 30)
+        self.getListResults.setEditable(False)
         bottomright.add(self.getListResults)
 
         # it creates a box to store the buttons funcinalities in the bottom-right area
