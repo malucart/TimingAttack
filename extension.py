@@ -1,6 +1,6 @@
 # libraries
 # necessary to connect to burp suite as a extension
-from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers
+from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers, IContextMenuFactory
 # necessary to create graphical user interface (gui) in java
 from javax import swing
 import javax.swing.border.EmptyBorder
@@ -17,6 +17,9 @@ import java.util.Scanner as Scanner
 # allow the user download the results, so the program needs to know the path of the download folder to put the file there
 import os
 
+from java.util import ArrayList
+from javax.swing import JMenuItem
+
 # if something goes wrong
 try:
     from exceptions_fix import FixBurpExceptions
@@ -24,7 +27,7 @@ except ImportError:
     pass
 
 # main class to connect to burp suite
-class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers):
+class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers, IContextMenuFactory):
     # method that shows the extension is loaded
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
@@ -40,6 +43,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
         self.callbacks.registerProxyListener(self)
+        self.callbacks.registerContextMenuFactory(self)
 
         self.curRequest = None
 
@@ -299,16 +303,30 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
 
     def showRequest(self, event):
-        if (self.showRequestIsOn):
-            self.showRequestIsOn = False
-            self.getResults.text = self.twoUserResultOutput
-            self.twoUserViewReq.setText("View the request")
+        showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput)
+        # if (self.showRequestIsOn):
+        #     self.showRequestIsOn = False
+        #     self.getResults.text = self.twoUserResultOutput
+        #     self.twoUserViewReq.setText("View the request")
+        # else:
+        #     self.showRequestIsOn = True
+        #     helpers = self.callbacks.getHelpers()
+        #     self.twoUserResultOutput = self.getResults.text
+        #     self.getResults.text = helpers.bytesToString(self.curRequest.getRequest())
+        #     self.twoUserViewReq.setText("View results")
+
+    def showRequest(self, box, button, output):
+        if (self.showListRequestIsOn):
+            self.showListRequestIsOn = False
+            box.text = output
+            button.setText("View the request")
+
         else:
-            self.showRequestIsOn = True
+            self.showListRequestIsOn = True
             helpers = self.callbacks.getHelpers()
-            self.twoUserResultOutput = self.getResults.text
-            self.getResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
-            self.twoUserViewReq.setText("View results")
+            output = box.text
+            box.text = helpers.bytesToString(self.curRequest.getRequest())
+            button.setText("View results")
 
     def showListRequest(self, event):
         if (self.showListRequestIsOn):
@@ -320,7 +338,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             self.showListRequestIsOn = True
             helpers = self.callbacks.getHelpers()
             self.listResultOutput = self.getListResults.text
-            self.getListResults.text = helpers.bytesToString(self.curRequest.getMessageInfo().getRequest())
+            self.getListResults.text = helpers.bytesToString(self.curRequest.getRequest())
             self.listViewReq.setText("View results")
 
 
@@ -330,7 +348,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         helpers = self.callbacks.getHelpers()
 
         # Get the request
-        request = self.curRequest.getMessageInfo().getRequest()
+        request = self.curRequest.getRequest()
         # Get request information
         requestInfo = helpers.analyzeRequest(request)
 
@@ -385,8 +403,31 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         # Check if request has specified parameter
         for i in requestInfo.getParameters():
             if (i.getName() == paramName):
-                self.curRequest = message
+                self.curRequest = message.getMessageInfo()
                 return
+
+    def createMenuItems(self, invocation):
+        self.context = invocation
+        menuList = ArrayList()
+        menuItem = JMenuItem("Send to Timing Attack",
+                              actionPerformed=self.requestSent(messageList=invocation.getSelectedMessages()))
+        menuList.add(menuItem)
+        return menuList
+
+    def requestSent(self, messageList):
+        self.curRequest = messageList[0]
+        if (self.showListRequestIsOn):
+            self.showListRequestIsOn = False
+            self.getListResults.text = self.listResultOutput
+            self.listViewReq.setText("View the request")
+
+        else:
+            self.showListRequestIsOn = True
+            helpers = self.callbacks.getHelpers()
+            self.listResultOutput = self.getListResults.text
+            self.getListResults.text = helpers.bytesToString(self.curRequest.getRequest())
+            self.listViewReq.setText("View results")
+
 
 try:
     FixBurpExceptions()
