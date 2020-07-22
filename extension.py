@@ -102,6 +102,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         tabNum = len(self.tabList) - 1
         self.tabbedPane.addTab(str(tabNum + 1) + "", self.tabList[tabNum].getFirstTab())
         self.tabList[tabNum].getRequest(messageList)
+        self.tabbedPane.setSelectedIndex(tabNum)
 
 
 try:
