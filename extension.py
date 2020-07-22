@@ -46,10 +46,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         # sets our extension name
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerExtensionStateListener(self)
-        #self.callbacks.registerProxyListener(self)
         self.callbacks.registerContextMenuFactory(self)
 
-        self.curRequest = None
 
         self.tabList = []
         self.createGUI()
@@ -93,8 +91,13 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         return menuList
 
     def requestSent(self, messageList):
+        # If there is an empty first tab, delete it
+        if (len(self.tabList) == 1 and self.tabList[0].curRequest == None):
+            self.tabbedPane.remove(0)
+            self.tabList.pop()
+
+        # Add the new tab
         t = tab(self.callbacks)
-        # tab.getRequest(messageList)
         self.tabList.append(t)
         tabNum = len(self.tabList) - 1
         self.tabbedPane.addTab(str(tabNum + 1) + "", self.tabList[tabNum].getFirstTab())
