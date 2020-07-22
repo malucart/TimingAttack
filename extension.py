@@ -281,9 +281,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
     # method that shows the time for the user
     def getTwoUserTimes(self):
-        self.getResults.text = "Valid username: " + self.validUser.text + " "
+        self.getResults.text = "Valid username:     " + self.validUser.text + " - time: "
         self.getResults.text += str(self.getTime(self.validUser.text)) + "\n"
-        self.getResults.text += "Invalid username: " + self.invalidUser.text + " "
+        self.getResults.text += "Invalid username:    " + self.invalidUser.text + " - time: "
         self.getResults.text += str(self.getTime(self.invalidUser.text))
 
     # method that reads the usernames from a file
@@ -364,7 +364,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
     def getTime(self, paramInput):
         # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
-
         # Get the request
         request = self.curRequest.getRequest()
         # Get request information
@@ -380,11 +379,17 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
                 newRequest = helpers.updateParameter(request, buildParam)
 
         # it builds an http service to send a request to the website
-        httpService = helpers.buildHttpService("127.0.0.1", 8000, False)
+
+        httpService = self.curRequest.getHttpService()
+        # requestUrl = str(requestInfo.getHost())
+        httpService = helpers.buildHttpService(httpService.getHost(), httpService.getPort(), False)
+
         # starts the time and it sends the changed request with valid parameter
         start = time.clock()
         makeRequest = self.callbacks.makeHttpRequest(httpService, newRequest)
+        makeRequest.getResponse()
         getTime = time.clock() - start
+
         # prints the response to the GUI
         return getTime
 
