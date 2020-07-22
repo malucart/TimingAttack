@@ -29,20 +29,6 @@ class tab():
         self.curRequest = None
 
         self.createTabGUI()
-    # def registerExtenderCallbacks(self, callbacks):
-    #     print("Created a tab")
-    #     # it is required for easier debugging:
-    #     # https://github.com/securityMB/burp-exceptions
-    #     sys.stdout = callbacks.getStdout()
-    #
-    #     # it keeps a reference to callbacks object
-    #     self.callbacks = callbacks
-    #
-    #     # sets our extension name
-    #     self.callbacks.setExtensionName("Timing Attack")
-    #     self.callbacks.registerExtensionStateListener(self)
-    #     self.callbacks.registerProxyListener(self)
-    #     self.callbacks.registerContextMenuFactory(self)
 
     def getFirstTab(self):
         return self.firstTab
@@ -101,6 +87,7 @@ class tab():
 
         # gets results and add them into the top-right box
         self.getResults = swing.JTextArea("", 50, 30)
+        self.getResults.setEditable(False)
         topright.add(self.getResults)
 
         # "view the request" button is created and added into the top-right box
@@ -167,6 +154,7 @@ class tab():
 
         # gets results about the time for each username from txt/json file and it adds it on bottom-right
         self.getListResults = swing.JTextArea("", 50, 30)
+        self.getListResults.setEditable(False)
         bottomright.add(self.getListResults)
 
         # it creates a box to store the buttons funcinalities in the bottom-right area

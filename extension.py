@@ -82,7 +82,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         t = tab(self.callbacks)
         self.tabList.append(t)
         self.tabbedPane.addTab("1", self.tabList[0].getFirstTab())
-        return
+
 
     def createMenuItems(self, invocation):
         self.context = invocation
