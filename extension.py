@@ -276,6 +276,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
     def timeTwoUsers(self, event):
         if (self.curRequest == None):
             return
+        # change button to say show request
+        self.showRequestTopIsOn = False
+        self.twoUserViewReq.setText("View the request")
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
@@ -305,6 +308,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             # divides the file to a list of usernames
             self.userList = readFile.split(self.paramSeparator.text)
 
+            # change button to say show request
+            self.showListRequestIsOn = False
+            self.listViewReq.setText("View the request")
             # gets the time for each username
             threading.Thread(target=self.getUserListTimes).start()
         # it will handle the error and send a message about it
@@ -314,6 +320,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
     # method that shows the time from each username for the user
     def getUserListTimes(self):
+        self.getListResults.text = ""
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
             self.getListResults.text += str(self.getTime(i)) + "\n"
@@ -326,6 +333,14 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
         self.showRequestTopIsOn = not self.showRequestTopIsOn
 
+    # method that shows the request from a file of usernames
+    def showListRequest(self, event):
+        if (not self.showListRequestIsOn):
+            self.listResultOutput = self.getListResults.text
+        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
+        self.showListRequestIsOn = not self.showListRequestIsOn
+
+    # Swicth from view request to view result and vice versa
     def showRequest(self, box, button, output, bool):
         if (bool):
             box.text = output
@@ -336,24 +351,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
             output = box.text
             box.text = helpers.bytesToString(self.curRequest.getRequest())
             button.setText("View results")
-
-    # method that shows the request from a file of usernames
-    def showListRequest(self, event):
-        if (not self.showListRequestIsOn):
-            self.listResultOutput = self.getListResults.text
-        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
-        self.showListRequestIsOn = not self.showListRequestIsOn
-        # if (self.showListRequestIsOn):
-        #     self.showListRequestIsOn = False
-        #     self.getListResults.text = self.listResultOutput
-        #     self.listViewReq.setText("View the request")
-        #
-        # else:
-        #     self.showListRequestIsOn = True
-        #     helpers = self.callbacks.getHelpers()
-        #     self.listResultOutput = self.getListResults.text
-        #     self.getListResults.text = helpers.bytesToString(self.curRequest.getRequest())
-        #     self.listViewReq.setText("View results")
 
     # method that offically gets the time from usernames
     def getTime(self, paramInput):
@@ -434,17 +431,10 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
     def requestSent(self, messageList):
         self.curRequest = messageList[0]
-        if (self.showListRequestIsOn):
-            self.showListRequestIsOn = False
-            self.getListResults.text = self.listResultOutput
-            self.listViewReq.setText("View the request")
-
-        else:
-            self.showListRequestIsOn = True
-            helpers = self.callbacks.getHelpers()
-            self.listResultOutput = self.getListResults.text
-            self.getListResults.text = helpers.bytesToString(self.curRequest.getRequest())
-            self.listViewReq.setText("View results")
+        self.showRequestTopIsOn = False
+        self.twoUserResultOutput = self.getResults.text
+        self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
+        self.showRequestTopIsOn = not self.showRequestTopIsOn
 
 
 try:
