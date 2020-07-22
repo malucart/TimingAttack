@@ -129,9 +129,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         topright.add(self.getResults)
 
         # "view the request" button is created and added into the top-right box
-        self.showRequestIsOn = False
+        self.showRequestTopIsOn = False
         self.twoUserResultOutput = ""
-        self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequest)
+        self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequestTop)
         topright.add(self.twoUserViewReq)
 
         # now as we have everything we want for the top-right, let's add it inside of the top-half
@@ -320,27 +320,18 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
         return
 
     # method that shows the request from one valid username and from one invalid username
-    def showRequest(self, event):
-        showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput)
-        # if (self.showRequestIsOn):
-        #     self.showRequestIsOn = False
-        #     self.getResults.text = self.twoUserResultOutput
-        #     self.twoUserViewReq.setText("View the request")
-        # else:
-        #     self.showRequestIsOn = True
-        #     helpers = self.callbacks.getHelpers()
-        #     self.twoUserResultOutput = self.getResults.text
-        #     self.getResults.text = helpers.bytesToString(self.curRequest.getRequest())
-        #     self.twoUserViewReq.setText("View results")
+    def showRequestTop(self, event):
+        if (not self.showRequestTopIsOn):
+            self.twoUserResultOutput = self.getResults.text
+        self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
+        self.showRequestTopIsOn = not self.showRequestTopIsOn
 
-    def showRequest(self, box, button, output):
-        if (self.showListRequestIsOn):
-            self.showListRequestIsOn = False
+    def showRequest(self, box, button, output, bool):
+        if (bool):
             box.text = output
             button.setText("View the request")
 
         else:
-            self.showListRequestIsOn = True
             helpers = self.callbacks.getHelpers()
             output = box.text
             box.text = helpers.bytesToString(self.curRequest.getRequest())
@@ -348,17 +339,21 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IProxyListener,
 
     # method that shows the request from a file of usernames
     def showListRequest(self, event):
-        if (self.showListRequestIsOn):
-            self.showListRequestIsOn = False
-            self.getListResults.text = self.listResultOutput
-            self.listViewReq.setText("View the request")
-
-        else:
-            self.showListRequestIsOn = True
-            helpers = self.callbacks.getHelpers()
+        if (not self.showListRequestIsOn):
             self.listResultOutput = self.getListResults.text
-            self.getListResults.text = helpers.bytesToString(self.curRequest.getRequest())
-            self.listViewReq.setText("View results")
+        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
+        self.showListRequestIsOn = not self.showListRequestIsOn
+        # if (self.showListRequestIsOn):
+        #     self.showListRequestIsOn = False
+        #     self.getListResults.text = self.listResultOutput
+        #     self.listViewReq.setText("View the request")
+        #
+        # else:
+        #     self.showListRequestIsOn = True
+        #     helpers = self.callbacks.getHelpers()
+        #     self.listResultOutput = self.getListResults.text
+        #     self.getListResults.text = helpers.bytesToString(self.curRequest.getRequest())
+        #     self.listViewReq.setText("View results")
 
     # method that offically gets the time from usernames
     def getTime(self, paramInput):
