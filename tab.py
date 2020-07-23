@@ -306,21 +306,15 @@ class tab():
 
     # Swicth from view request to view result and vice versa
     def showRequest(self, box, button, output, bool):
-        print("this")
         if (bool):
             box.text = output
             button.setText("View the request")
 
         else:
-            print("is")
             helpers = self.callbacks.getHelpers()
-            print("cool" + str(self.curRequest) + "gjtdh")
             output = box.text
-            print("i")
             box.text = helpers.bytesToString(self.curRequest.getRequest())
-            print("think" + box.text)
             button.setText("View results")
-            print("!")
 
     # method that offically gets the time from usernames
     def getTime(self, paramInput):
@@ -376,13 +370,8 @@ class tab():
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
     def getRequest(self, messageList):
-        print("hi")
         self.curRequest = messageList[0]
-        print("hi")
         self.showRequestTopIsOn = False
-        print("hi")
         self.twoUserResultOutput = self.getResults.text
-        print("hi")
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
-        print("hi")
         self.showRequestTopIsOn = not self.showRequestTopIsOn

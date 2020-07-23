@@ -48,12 +48,12 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         self.callbacks.registerExtensionStateListener(self)
         self.callbacks.registerContextMenuFactory(self)
 
-
         self.tabList = []
         self.createGUI()
 
         # adds the custom tab to our burp suite's UI
         callbacks.addSuiteTab(self)
+
         print "Extension loaded."
         return
 
@@ -70,6 +70,8 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
     def createGUI(self):
         # create the tab
         self.tab = swing.JPanel(BorderLayout())
+        self.tab.setName("Timing Attack")
+
 
         # create a tabbed pane on the top left of the timing attack tab (in general, it's going to be numbers)
         # it is necessary to open how many timing attack we want but still in the same timing attack tab
@@ -82,6 +84,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         self.tabbedPane.addTab("1", self.tabList[0].getFirstTab())
 
 
+
     def createMenuItems(self, invocation):
         self.context = invocation
         menuList = ArrayList()
@@ -91,6 +94,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         return menuList
 
     def requestSent(self, messageList):
+        self.highlightTab()
         # If there is an empty first tab, delete it
         if (len(self.tabList) == 1 and self.tabList[0].curRequest == None):
             self.tabbedPane.remove(0)
@@ -104,6 +108,12 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, ITab, IExtensionHelpe
         self.tabList[tabNum].getRequest(messageList)
         self.tabbedPane.setSelectedIndex(tabNum)
 
+    def highlightTab(self):
+        parentTabbedPane = self.getUiComponent().getParent()
+        if (parentTabbedPane != None):
+            for i in range(parentTabbedPane.getTabCount()):
+                if parentTabbedPane.getComponentAt(i) == self.getUiComponent():
+                    parentTabbedPane.setBackgroundAt(i, Color(16737843));
 
 try:
     FixBurpExceptions()
