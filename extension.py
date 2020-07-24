@@ -83,7 +83,7 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         self.tabbedPane.addTab("1", self.tabList[0].getFirstTab())
 
     #
-    # proxy -> action -> Send to Timing Attack
+    # proxy -> action -> Send to Timing Attack (menu item created)
     #
     def createMenuItems(self, invocation):
         self.context = invocation
@@ -92,15 +92,19 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         menuList.add(menuItem)
         return menuList
 
-
+    #
+    # proxy -> action -> Send to Timing Attack (request sent)
+    #
     def requestSent(self, messageList):
+        # highlight timing attack tab
         self.highlightTab()
-        # If there is an empty first tab, delete it
+
+        # delete an empty first tab
         if (len(self.tabList) == 1 and self.tabList[0].curRequest == None):
             self.tabbedPane.remove(0)
             self.tabList.pop()
 
-        # Add the new tab
+        # add the new tab
         t = tab(self.callbacks)
         self.tabList.append(t)
         tabNum = len(self.tabList) - 1
@@ -108,6 +112,9 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         self.tabList[tabNum].getRequest(messageList)
         self.tabbedPane.setSelectedIndex(tabNum)
 
+    #
+    # highlight timing attack tab
+    #
     def highlightTab(self):
         parentTabbedPane = self.getUiComponent().getParent()
         if (parentTabbedPane != None):
