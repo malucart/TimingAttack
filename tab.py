@@ -1,13 +1,22 @@
-# libraries
-# necessary to connect to burp suite as a extension
-from burp import IBurpExtender, IExtensionStateListener, ITab, IProxyListener, IExtensionHelpers, IContextMenuFactory
-
+from burp import IBurpExtender # for the extension
+from burp import ITab # for creating an extension tab
+from burp import IExtensionHelpers # for helper methods
+from burp import IContextMenuFactory # for adding an option to the right click popup menu
 from burp import IBurpExtenderCallbacks
-# necessary to create graphical user interface (gui) in java
-from javax import swing
-import javax.swing.border.EmptyBorder
-import javax.swing.filechooser.FileNameExtensionFilter
-from java.awt import BorderLayout, Color, Font
+from javax.swing import JPanel # for panels
+from javax.swing import Box # for arranging components either in a row or in a column
+from javax.swing import JTextField # for inputting text value in a single line format
+from javax.swing import JTextArea # for multi-line text component to display text
+from javax.swing import JButton # for buttons
+from javax.swing import JSeparator # for implementing divider lines
+from javax.swing import JScrollPane # for scroll panes to help with extended text areas
+from javax.swing import JLabel # for labels
+from javax.swing import JFileChooser # for importing and exporting dialog boxes
+from javax.swing.filechooser import FileNameExtensionFilter # for importing and exporting
+from javax.swing.border import EmptyBorder # for an empty/transparent border
+from java.awt import BorderLayout # for panel layouts
+from java.awt import Color # for setting a different background on disabled text areas
+from java.awt import Font # for adding bold font to text labels in main tab
 # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
 import sys
 # allow to use the clock time
@@ -20,7 +29,6 @@ import java.util.Scanner as Scanner
 import os
 
 from java.util import ArrayList
-from javax.swing import JMenuItem
 
 class tab():
     def __init__(self, callbacks):
@@ -34,15 +42,15 @@ class tab():
         return self.firstTab
 
     def createTabGUI(self):
-        self.firstTab = swing.JPanel()
+        # creation of the whole layout
+        self.firstTab = JPanel()
         self.firstTab.layout = BorderLayout()
 
-        # creation of the whole layout
         # it creates a big box (to put everything inside)
-        pagebox = swing.Box.createVerticalBox()
+        pagebox = Box.createVerticalBox()
 
         # creates a box for top-half area
-        tophalf = swing.Box.createHorizontalBox()
+        tophalf = Box.createHorizontalBox()
 
         # creates a box inside of the top-half area in the top-left
         topleft = self.getBorderVertBox()
@@ -50,31 +58,31 @@ class tab():
         self.addTitle("Enter a Valid and an Invalid Username", topleft)
 
         # creates a box for a valid username and it gets data from the user
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
         self.addLabel("Valid username: ", boxHor)
-        self.validUser = swing.JTextField("", 30)
+        self.validUser = JTextField("", 30)
         boxHor.add(self.validUser)
         # top-left box adds this box
         topleft.add(boxHor)
 
         # creates a box for a invalid username and it gets data from the user
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
         self.addLabel("Invalid username: ", boxHor)
-        self.invalidUser = swing.JTextField("", 30)
+        self.invalidUser = JTextField("", 30)
         boxHor.add(self.invalidUser)
         # top-left box adds this box
         topleft.add(boxHor)
 
         # creates a box for the parameter and it gets data from the user
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
-        self.parameterName = swing.JTextField("", 30)
+        self.parameterName = JTextField("", 30)
         boxHor.add(self.parameterName)
         # top-left box adds this box
         topleft.add(boxHor)
 
         # "submit" button is created and added into the top-left box
-        submit = swing.JButton("submit", actionPerformed=self.timeTwoUsers)
+        submit = JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
         # now as we have everything we want for the top-left, let's add it inside of the top-half
@@ -86,14 +94,14 @@ class tab():
         self.addTitle("Results", topright)
 
         # gets results and add them into the top-right box
-        self.getResults = swing.JTextArea("", 50, 30)
+        self.getResults = JTextArea("", 50, 30)
         self.getResults.setEditable(False)
         topright.add(self.getResults)
 
         # "view the request" button is created and added into the top-right box
         self.showRequestTopIsOn = False
         self.twoUserResultOutput = ""
-        self.twoUserViewReq = swing.JButton("View the request", actionPerformed=self.showRequestTop)
+        self.twoUserViewReq = JButton("View the request", actionPerformed=self.showRequestTop)
         topright.add(self.twoUserViewReq)
 
         # now as we have everything we want for the top-right, let's add it inside of the top-half
@@ -103,11 +111,11 @@ class tab():
         pagebox.add(tophalf)
 
         # it draws a horizontal line right after top-half box
-        sep = swing.JSeparator()
+        sep = JSeparator()
         pagebox.add(sep)
 
         # it creates a box for bottom-half area
-        bottomhalf = swing.Box.createHorizontalBox()
+        bottomhalf = Box.createHorizontalBox()
 
         # it creates a bottom-left box
         bottomleft = self.getBorderVertBox()
@@ -115,32 +123,32 @@ class tab():
         self.addTitle("Input Username File", bottomleft)
 
         # creates a box to input a list of usernames (txt or json file)
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
         self.addLabel("Input file: ", boxHor)
-        self.inputFile = swing.JButton("Choose file...", actionPerformed=self.chooseFile)
+        self.inputFile = JButton("Choose file...", actionPerformed=self.chooseFile)
         boxHor.add(self.inputFile)
         # bottom-left box adds this box
         bottomleft.add(boxHor)
 
         # creates a box to input a parameter separator
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
         self.addLabel("Enter parameter separator: ", boxHor)
-        self.paramSeparator = swing.JTextField("", 30)
+        self.paramSeparator = JTextField("", 30)
         boxHor.add(self.paramSeparator)
         # bottom-left box adds this box
         bottomleft.add(boxHor)
 
         # creates a box to input a parameter
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
         self.addLabel("Enter parameter: ", boxHor)
-        self.fileParameterName = swing.JTextField("", 30)
+        self.fileParameterName = JTextField("", 30)
         boxHor.add(self.fileParameterName)
         # bottom-left box adds this box
         bottomleft.add(boxHor)
 
         # "submit" button is created and added into the bottom-left box
-        submit = swing.JButton("submit", actionPerformed=self.timeUserList)
-        self.fileSubmitError = swing.JLabel("")
+        submit = JButton("submit", actionPerformed=self.timeUserList)
+        self.fileSubmitError = JLabel("")
         bottomleft.add(submit)
         bottomleft.add(self.fileSubmitError)
 
@@ -153,23 +161,23 @@ class tab():
         self.addTitle("Results", bottomright)
 
         # gets results about the time for each username from txt/json file and it adds it on bottom-right
-        self.getListResults = swing.JTextArea("", 50, 30)
+        self.getListResults = JTextArea("", 50, 30)
         self.getListResults.setEditable(False)
-        getListResultsContainer = swing.JScrollPane(self.getListResults)
+        getListResultsContainer = JScrollPane(self.getListResults)
         bottomright.add(getListResultsContainer)
 
         # it creates a box to store the buttons funcinalities in the bottom-right area
-        boxHor = swing.Box.createHorizontalBox()
+        boxHor = Box.createHorizontalBox()
 
         # "download results" button allows the user to download the results because they are stored
         # into the box which stores the buttons funcinalities
-        downRes = swing.JButton("Download results", actionPerformed=self.downloadResults)
+        downRes = JButton("Download results", actionPerformed=self.downloadResults)
         boxHor.add(downRes)
 
         # "view the request" button is stored into the box which stores the buttons funcinalities
         self.showListRequestIsOn = False
         self.listResultOutput = ""
-        self.listViewReq = swing.JButton("View the request", actionPerformed=self.showListRequest)
+        self.listViewReq = JButton("View the request", actionPerformed=self.showListRequest)
         boxHor.add(self.listViewReq)
 
         # bottom-right box adds the box which stores the buttons funcinalities
@@ -182,15 +190,15 @@ class tab():
         pagebox.add(bottomhalf)
 
         # it draws a horizontal line right after the bottom-half box
-        sep = swing.JSeparator()
+        sep = JSeparator()
         # big box stores this horizontal line
         pagebox.add(sep)
 
         # it creates a box for debugging output
         debugbox = self.getBorderVertBox()
-        horizontaldebug = swing.Box.createHorizontalBox()
+        horizontaldebug = Box.createHorizontalBox()
         self.addLabel("Something went wrong?", horizontaldebug)
-        viewDeb = swing.JButton("View debug output")
+        viewDeb = JButton("View debug output")
         horizontaldebug.add(viewDeb)
         debugbox.add(horizontaldebug)
         # big box adds this box
@@ -203,14 +211,14 @@ class tab():
 
     # method that creates a box without border (we can say that it can be the background box)
     def getBorderVertBox(self):
-        boxVert = swing.Box.createVerticalBox()
-        bord = swing.border.EmptyBorder(10, 10, 10, 10)
+        boxVert = Box.createVerticalBox()
+        bord = EmptyBorder(10, 10, 10, 10)
         boxVert.setBorder(bord)
         return boxVert
 
     # method that creates the label/text
     def addLabel(self, text, box):
-        labelArea = swing.JLabel(text)
+        labelArea = JLabel(text)
         box.add(labelArea)
         return
 
@@ -221,7 +229,7 @@ class tab():
         # Create font for titles
         titlefont = Font("Tahoma", 1, 14)
         # Create title
-        labelArea = swing.JLabel(text)
+        labelArea = JLabel(text)
         labelArea.setForeground(orange);
         labelArea.setFont(titlefont);
         box.add(labelArea)
@@ -229,12 +237,22 @@ class tab():
 
     # method that allows the user to choose a file
     def chooseFile(self, event):
-        self.chooser = swing.JFileChooser()
+        # try to load the last used directory
+        try:
+            # load the directory for future imports/exports
+            fileChooserDirectory = self._callbacks.loadExtensionSetting("fileChooserDirectory")
+
+        # there is not a last used directory
+        except:
+            # set the last used directory to blank
+            fileChooserDirectory = ""
+
+        self.chooser = JFileChooser(fileChooserDirectory)
         fileextensions = ["txt", "jason"]
-        filter = swing.filechooser.FileNameExtensionFilter("TXT & JSON FILES", fileextensions)
+        filter = FileNameExtensionFilter("TXT & JSON FILES", fileextensions)
         self.chooser.setFileFilter(filter)
         returnVal = self.chooser.showOpenDialog(self.chooser)
-        if(returnVal == swing.JFileChooser.APPROVE_OPTION):
+        if(returnVal == JFileChooser.APPROVE_OPTION):
             self.inputFile.text = self.chooser.getSelectedFile().getName()
 
     # method that gets the time from one valid username and from one invalid username
