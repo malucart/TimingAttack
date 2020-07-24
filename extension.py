@@ -51,16 +51,15 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         print "Extension loaded."
         return
 
-    # method that implements ITab
+    # Burp Suite uses this method to obtain the caption that should appear on the custom tab when it is displayed
     def getTabCaption(self):
-        # returns the text that is displayed on the burp suite's new tab
         return "Timing Attack"
 
-    # method that passes the UI to burp suite
+    # Burp Suite uses this method to obtain the component that should be used as the contents of the custom tab when it is displayed
     def getUiComponent(self):
         return self.tab
 
-    # method that organizes a better GUI
+    # create GUI
     def createGUI(self):
         # create the tab
         self.tab = JPanel(BorderLayout())
