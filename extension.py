@@ -29,8 +29,7 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
-        # required for easier debugging:
-        # https://github.com/securityMB/burp-exceptions
+        # required for easier debugging: https://github.com/securityMB/burp-exceptions
         sys.stdout = callbacks.getStdout()
 
         # keep a reference to callbacks object
