@@ -155,7 +155,8 @@ class tab():
         # gets results about the time for each username from txt/json file and it adds it on bottom-right
         self.getListResults = swing.JTextArea("", 50, 30)
         self.getListResults.setEditable(False)
-        bottomright.add(self.getListResults)
+        getListResultsContainer = swing.JScrollPane(self.getListResults)
+        bottomright.add(getListResultsContainer)
 
         # it creates a box to store the buttons funcinalities in the bottom-right area
         boxHor = swing.Box.createHorizontalBox()
