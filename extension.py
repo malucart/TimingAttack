@@ -124,7 +124,6 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
             for i in range(parentTabbedPane.getTabCount()):
                 if parentTabbedPane.getComponentAt(i) == self.getUiComponent():
                     parentTabbedPane.setBackgroundAt(i, Color(16737843));
-                    print("lkjhgf")
                     threading.Timer(5, self.unHighlightTab, [i]).start()
 
     #

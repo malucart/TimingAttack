@@ -106,6 +106,15 @@ class tab():
         # the box adds the parameter input
         boxHor.add(self.parameterName)
 
+        # create a label for the number of tries into the box
+        self.addLabel("How many tries would you like to average: ", boxHor)
+
+        # create input for number of tries
+        self.numTries = JTextField("", 30)
+
+        # the box adds the number of tries input
+        boxHor.add(self.numTries)
+
         # top-left box adds this box
         topleft.add(boxHor)
 
@@ -177,6 +186,19 @@ class tab():
         self.fileParameterName = JTextField("", 30)
         boxHor.add(self.fileParameterName)
         # bottom-left box adds this box
+        bottomleft.add(boxHor)
+
+        boxHor = Box.createHorizontalBox()
+        # create a label for the number of tries into the box
+        self.addLabel("How many tries would you like to average: ", boxHor)
+
+        # create input for number of tries
+        self.listNumTries = JTextField("", 30)
+
+        # the box adds the number of tries input
+        boxHor.add(self.listNumTries)
+
+        # top-left box adds this box
         bottomleft.add(boxHor)
 
         # "submit" button is created and added into the bottom-left box
@@ -300,10 +322,10 @@ class tab():
 
     # method that shows the time for the user
     def getTwoUserTimes(self):
-        self.getResults.text = "Valid username: " + self.validUser.text + " ; time: "
-        self.getResults.text += str(self.getTime(self.validUser.text)) + "\n"
-        self.getResults.text += "Invalid username: " + self.invalidUser.text + " ; time: "
-        self.getResults.text += str(self.getTime(self.invalidUser.text))
+        self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
+        self.getResults.text += str(self.getTime(self.validUser.text, self.numTries.text)) + "\n"
+        self.getResults.text += "Invalid username: " + self.invalidUser.text + " Time: "
+        self.getResults.text += str(self.getTime(self.invalidUser.text, self.numTries.text))
 
     # method that reads the usernames from a file
     def timeUserList(self, event):
@@ -339,7 +361,7 @@ class tab():
         self.getListResults.text = ""
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
-            self.getListResults.text += str(self.getTime(i)) + "\n"
+            self.getListResults.text += str(self.getTime(i, self.listNumTries.text)) + "\n"
         return
 
     # method that shows the request from one valid username and from one invalid username
@@ -369,7 +391,8 @@ class tab():
             button.setText("View results")
 
     # method that offically gets the time from usernames
-    def getTime(self, paramInput):
+    def getTime(self, paramInput, numTriesText):
+        numTries = int(numTriesText)
         # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
         # Get the request
@@ -391,14 +414,16 @@ class tab():
         ### requestUrl = str(requestInfo.getHost())
         httpService = helpers.buildHttpService(httpService.getHost(), httpService.getPort(), False)
 
-        # starts the time and it sends the changed request with valid parameter
-        start = time.clock()
-        makeRequest = self.callbacks.makeHttpRequest(httpService, newRequest)
-        makeRequest.getResponse()
-        getTime = time.clock() - start
+        getTime = 0
+        for i in range(numTries):
+            # starts the time and it sends the changed request with valid parameter
+            start = time.clock()
+            makeRequest = self.callbacks.makeHttpRequest(httpService, newRequest)
+            makeRequest.getResponse()
+            getTime += time.clock() - start
 
         # prints the response to the GUI
-        return getTime
+        return getTime / numTries
 
     # method that allows the user to download
     def downloadResults(self, event):
