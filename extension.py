@@ -25,7 +25,9 @@ except ImportError:
 # Burp extender main class
 #
 class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
+    #
     # implement IBurpExtender when the extension is loaded
+    #
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
@@ -51,38 +53,45 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         print "Extension loaded."
         return
 
+    #
     # Burp Suite uses this method to obtain the caption that should appear on the custom tab when it is displayed
+    #
     def getTabCaption(self):
         return "Timing Attack"
 
+    #
     # Burp Suite uses this method to obtain the component that should be used as the contents of the custom tab when it is displayed
+    #
     def getUiComponent(self):
         return self.tab
 
+    #
     # create GUI
+    #
     def createGUI(self):
-        # create the tab
+        # create the panel that border layout lays out a container, arranging and resizing its components to fit
         self.tab = JPanel(BorderLayout())
+
+        # set the extension name
         self.tab.setName("Timing Attack")
 
-
-        # create a tabbed pane on the top left of the timing attack tab (in general, it's going to be numbers)
-        # it is necessary to open how many timing attack we want but still in the same timing attack tab
+        # create a tabbed pane on the top left of the timing attack tab
         self.tabbedPane = JTabbedPane()
         self.tab.add(self.tabbedPane);
         t = tab(self.callbacks)
         self.tabList.append(t)
         self.tabbedPane.addTab("1", self.tabList[0].getFirstTab())
 
-
-
+    #
+    # proxy -> action -> Send to Timing Attack
+    #
     def createMenuItems(self, invocation):
         self.context = invocation
         menuList = ArrayList()
-        menuItem = JMenuItem("Send to Timing Attack",
-                              actionPerformed=self.requestSent(messageList=invocation.getSelectedMessages()))
+        menuItem = JMenuItem("Send to Timing Attack", actionPerformed=self.requestSent(messageList=invocation.getSelectedMessages()))
         menuList.add(menuItem)
         return menuList
+
 
     def requestSent(self, messageList):
         self.highlightTab()
