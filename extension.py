@@ -88,14 +88,17 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
     def createMenuItems(self, invocation):
         self.context = invocation
         menuList = ArrayList()
-        menuItem = JMenuItem("Send to Timing Attack", actionPerformed=self.requestSent(messageList=invocation.getSelectedMessages()))
+        self.messageList = invocation.getSelectedMessages()
+        menuItem = JMenuItem("Send to Timing Attack", actionPerformed = self.requestSent)
+        # JMenuItem("New",actionPerformed = OnClick)
         menuList.add(menuItem)
         return menuList
 
     #
     # proxy -> action -> Send to Timing Attack (request sent)
     #
-    def requestSent(self, messageList):
+    def requestSent(self, event):
+        messageList = self.messageList
         # highlight timing attack tab
         self.highlightTab()
 
