@@ -17,20 +17,20 @@ from javax.swing.border import EmptyBorder # for an empty/transparent border
 from java.awt import BorderLayout # for panel layouts
 from java.awt import Color # for setting a different background on disabled text areas
 from java.awt import Font # for adding bold font to text labels in main tab
-# provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
-import sys
-# allow to use the clock time
-import time
-# allow multiple activities within a single process
-import threading
-# allow the user types an input
-import java.util.Scanner as Scanner
-# allow the user download the results, so the program needs to know the path of the download folder to put the file there
-import os
+from java.util import ArrayList # for arraylist
+from java.util import Scanner # for reading file
+import sys # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
+import time # for clock time
+import threading # for multiple activities within a single process
+import os # for splitting the file name and file extension when importing and exporting
 
-from java.util import ArrayList
-
+#
+# class for the whole UI
+#
 class tab():
+    #
+    # method that is automatically called when memory is allocated for a new object
+    #
     def __init__(self, callbacks):
         print("Created a tab")
         self.callbacks = callbacks
@@ -38,15 +38,21 @@ class tab():
 
         self.createTabGUI()
 
+    #
+    # get the tabbed pane on the top left of the timing attack tab
+    #
     def getFirstTab(self):
         return self.firstTab
 
+    #
+    # create GUI for this tabbed pane
+    #
     def createTabGUI(self):
-        # creation of the whole layout
+        # create main panel to the whole layout
         self.firstTab = JPanel()
         self.firstTab.layout = BorderLayout()
 
-        # it creates a big box (to put everything inside)
+        # create a big box to organize the layout inside of it
         pagebox = Box.createVerticalBox()
 
         # creates a box for top-half area
