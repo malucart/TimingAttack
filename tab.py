@@ -17,20 +17,20 @@ from javax.swing.border import EmptyBorder # for an empty/transparent border
 from java.awt import BorderLayout # for panel layouts
 from java.awt import Color # for setting a different background on disabled text areas
 from java.awt import Font # for adding bold font to text labels in main tab
-# provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
-import sys
-# allow to use the clock time
-import time
-# allow multiple activities within a single process
-import threading
-# allow the user types an input
-import java.util.Scanner as Scanner
-# allow the user download the results, so the program needs to know the path of the download folder to put the file there
-import os
+from java.util import ArrayList # for arraylist
+from java.util import Scanner # for reading file
+import sys # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
+import time # for clock time
+import threading # for multiple activities within a single process
+import os # for splitting the file name and file extension when importing and exporting
 
-from java.util import ArrayList
-
+#
+# class for the whole UI
+#
 class tab():
+    #
+    # method that is automatically called when memory is allocated for a new object
+    #
     def __init__(self, callbacks):
         print("Created a tab")
         self.callbacks = callbacks
@@ -38,46 +38,74 @@ class tab():
 
         self.createTabGUI()
 
+    #
+    # get the tabbed pane on the top left of the timing attack tab
+    #
     def getFirstTab(self):
         return self.firstTab
 
+    #
+    # create GUI for this tabbed pane
+    #
     def createTabGUI(self):
-        # creation of the whole layout
+        # create main panel to the whole layout
         self.firstTab = JPanel()
         self.firstTab.layout = BorderLayout()
 
-        # it creates a big box (to put everything inside)
+        # create a big box to organize the layout inside of it
         pagebox = Box.createVerticalBox()
 
-        # creates a box for top-half area
+        # create a box for top-half area
         tophalf = Box.createHorizontalBox()
 
-        # creates a box inside of the top-half area in the top-left
+        # create a box inside of the top-half area in the top-left
         topleft = self.getBorderVertBox()
+
         # title for the top-left area
         self.addTitle("Enter a Valid and an Invalid Username", topleft)
 
-        # creates a box for a valid username and it gets data from the user
+        # create a box for label and valid username input
         boxHor = Box.createHorizontalBox()
+
+        # create a label for valid username into the box
         self.addLabel("Valid username: ", boxHor)
+
+        # create input for valid username
         self.validUser = JTextField("", 30)
+
+        # the box adds the valid username input
         boxHor.add(self.validUser)
+
         # top-left box adds this box
         topleft.add(boxHor)
 
-        # creates a box for a invalid username and it gets data from the user
+        # create a box for an invalid username input
         boxHor = Box.createHorizontalBox()
+
+        # create a label for an invalid username into the box
         self.addLabel("Invalid username: ", boxHor)
+
+        # create input for invalid username
         self.invalidUser = JTextField("", 30)
+
+        # the box adds the invalid username input
         boxHor.add(self.invalidUser)
+
         # top-left box adds this box
         topleft.add(boxHor)
 
-        # creates a box for the parameter and it gets data from the user
+        # create a box for the parameter input
         boxHor = Box.createHorizontalBox()
+
+        # create a label for the parameter into the box
         self.addLabel("Enter parameter: ", boxHor)
+
+        # create input for parameter
         self.parameterName = JTextField("", 30)
+
+        # the box adds the parameter input
         boxHor.add(self.parameterName)
+
         # top-left box adds this box
         topleft.add(boxHor)
 
@@ -85,17 +113,22 @@ class tab():
         submit = JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
-        # now as we have everything we want for the top-left, let's add it inside of the top-half
+        # top-left is added into the top-half
         tophalf.add(topleft)
 
-        # creates a box inside of the top-half area in the top-right
+        # create a box inside of the top-half area in the top-right
         topright = self.getBorderVertBox()
+
         # title for the top-right area
         self.addTitle("Results", topright)
 
-        # gets results and add them into the top-right box
+        # show results in a text area
         self.getResults = JTextArea("", 50, 30)
+
+        # results are not editable
         self.getResults.setEditable(False)
+
+        # top-right adds this text area
         topright.add(self.getResults)
 
         # "view the request" button is created and added into the top-right box
@@ -104,20 +137,20 @@ class tab():
         self.twoUserViewReq = JButton("View the request", actionPerformed=self.showRequestTop)
         topright.add(self.twoUserViewReq)
 
-        # now as we have everything we want for the top-right, let's add it inside of the top-half
+        # top-right is added into the top-half
         tophalf.add(topright)
 
-        # as we have everything we want for the top-half, let's add it inside of the big box
+        # top-half is added into the big box
         pagebox.add(tophalf)
 
-        # it draws a horizontal line right after top-half box
+        # draw a horizontal line right after top-half box
         sep = JSeparator()
         pagebox.add(sep)
 
-        # it creates a box for bottom-half area
+        # create a box for bottom-half area
         bottomhalf = Box.createHorizontalBox()
 
-        # it creates a bottom-left box
+        # create a bottom-left box
         bottomleft = self.getBorderVertBox()
         # title for the bottom-left area
         self.addTitle("Input Username File", bottomleft)

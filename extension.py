@@ -127,8 +127,10 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
                     print("lkjhgf")
                     threading.Timer(5, self.unHighlightTab, [i]).start()
 
+    #
+    # unhighlight timing attack tab
+    #
     def unHighlightTab(self, componentNum):
-        print("hkgj")
         parentTabbedPane = self.getUiComponent().getParent()
         parentTabbedPane.setBackgroundAt(componentNum, Color(000000));
 
