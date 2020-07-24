@@ -8,49 +8,45 @@ from javax.swing import JMenuItem # for adding menu choices to add a new issue
 from java.awt import BorderLayout # for panel layouts
 from java.awt import Color # for setting a different background on disabled text areas
 from java.awt import Font # for adding bold font to text labels in main tab
-# provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
-import sys
-# allow to use the clock time
-import time
-# allow multiple activities within a single process
-import threading
-# allow the user types an input
-# allow the user download the results, so the program needs to know the path of the download folder to put the file there
-import os
+from java.util import ArrayList # for arraylist
+import sys # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
+import time # for clock time
+import threading # for multiple activities within a single process
+import os # for splitting the file name and file extension when importing and exporting
+from tab import tab # calling the tab.py file
 
-from java.util import ArrayList
-
-sys.path.append(".")
-from tab import tab
-
-
-# if something goes wrong
+# if something initially goes wrong
 try:
     from exceptions_fix import FixBurpExceptions
 except ImportError:
     pass
 
-# main class to connect to burp suite
+#
+# Burp extender main class
+#
 class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
-    # method that shows the extension is loaded
+    # implement IBurpExtender when the extension is loaded
     def registerExtenderCallbacks(self, callbacks):
         print "Loading timing attack extension\n"
 
-        # it is required for easier debugging:
+        # required for easier debugging:
         # https://github.com/securityMB/burp-exceptions
         sys.stdout = callbacks.getStdout()
 
-        # it keeps a reference to callbacks object
+        # keep a reference to callbacks object
         self.callbacks = callbacks
 
-        # sets our extension name
+        # set our extension name
         self.callbacks.setExtensionName("Timing Attack")
         self.callbacks.registerContextMenuFactory(self)
 
+        # set tab list inside of timing attack tab
         self.tabList = []
+
+        # create GUI
         self.createGUI()
 
-        # adds the custom tab to our burp suite's UI
+        # add a custom tab to the main Burp Suite window
         callbacks.addSuiteTab(self)
 
         print "Extension loaded."
@@ -112,6 +108,7 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
                 if parentTabbedPane.getComponentAt(i) == self.getUiComponent():
                     parentTabbedPane.setBackgroundAt(i, Color(16737843));
 
+# if something after everything goes wrong
 try:
     FixBurpExceptions()
 except:
