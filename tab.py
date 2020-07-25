@@ -207,55 +207,67 @@ class tab():
         bottomleft.add(submit)
         bottomleft.add(self.fileSubmitError)
 
-        # now as we have everything we want for the bottom-left, let's add it inside of the bottom-half
+        # bottom-left is added into the bottom-half
         bottomhalf.add(bottomleft)
 
         # creates a box inside of the bottom-half area in the bottom-right
         bottomright = self.getBorderVertBox()
+
         # title for the bottom-right area
         self.addTitle("Results", bottomright)
 
-        # gets results about the time for each username from txt/json file and it adds it on bottom-right
+        # show results about of each username from txt/json file
         self.getListResults = JTextArea("", 50, 30)
+
+        # results are not editable
         self.getListResults.setEditable(False)
+
+        # results are scrollable
         getListResultsContainer = JScrollPane(self.getListResults)
+
+        # these results scrollable are added into the bottom-right
         bottomright.add(getListResultsContainer)
 
-        # it creates a box to store the buttons funcinalities in the bottom-right area
+        # create a box to store the buttons funcinalities in the bottom-right area
         boxHor = Box.createHorizontalBox()
 
-        # "download results" button allows the user to download the results because they are stored
-        # into the box which stores the buttons funcinalities
+        # "download results" button to download the results
         downRes = JButton("Download results", actionPerformed=self.downloadResults)
+
+        # box adds this button
         boxHor.add(downRes)
 
-        # "view the request" button is stored into the box which stores the buttons funcinalities
+        # "view the request" button
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewReq = JButton("View the request", actionPerformed=self.showListRequest)
+
+        # box adds this button
         boxHor.add(self.listViewReq)
 
         # bottom-right box adds the box which stores the buttons funcinalities
         bottomright.add(boxHor)
 
-        # now as we have everything we want for the bottom-right, let's add it inside of the bottom-half
+        # bottom-right is added into the bottom-half
         bottomhalf.add(bottomright)
 
-        # as we have everything we want for the bottom-half, let's add it inside of the big box
+        # bottom-half is added into the big box
         pagebox.add(bottomhalf)
 
-        # it draws a horizontal line right after the bottom-half box
+        # draws a horizontal line right after the bottom-half box
         sep = JSeparator()
+
         # big box stores this horizontal line
         pagebox.add(sep)
 
-        # it creates a box for debugging output
+        # create a box for debugging output
         debugbox = self.getBorderVertBox()
         horizontaldebug = Box.createHorizontalBox()
         self.addLabel("Something went wrong?", horizontaldebug)
         viewDeb = JButton("View debug output")
         horizontaldebug.add(viewDeb)
         debugbox.add(horizontaldebug)
+
         # big box adds this box
         pagebox.add(debugbox)
 
