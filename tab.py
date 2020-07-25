@@ -240,6 +240,8 @@ class tab():
         # "view the request" button
         self.showListRequestIsOn = False
         self.listResultOutput = ""
+
+        # create a button
         self.listViewReq = JButton("View the request", actionPerformed=self.showListRequest)
 
         # box adds this button
@@ -263,8 +265,14 @@ class tab():
         # create a box for debugging output
         debugbox = self.getBorderVertBox()
         horizontaldebug = Box.createHorizontalBox()
+
+        # create label for this endding section
         self.addLabel("Something went wrong?", horizontaldebug)
+
+        # button to view debug output
         viewDeb = JButton("View debug output")
+
+        # box adds this button
         horizontaldebug.add(viewDeb)
         debugbox.add(horizontaldebug)
 
@@ -274,22 +282,29 @@ class tab():
         # timing attack tab adds the big box
         self.firstTab.add(pagebox)
 
+        # the whole tab is returned
         return self.firstTab
 
-    # method that creates a box without border (we can say that it can be the background box)
+    #
+    # method that creates the background box
+    #
     def getBorderVertBox(self):
         boxVert = Box.createVerticalBox()
         bord = EmptyBorder(10, 10, 10, 10)
         boxVert.setBorder(bord)
         return boxVert
 
-    # method that creates the label/text
+    #
+    # method that creates the label
+    #
     def addLabel(self, text, box):
         labelArea = JLabel(text)
         box.add(labelArea)
         return
 
+    #
     # method that add titles for the white boxes
+    #
     def addTitle(self, text, box):
         # Create orange color variable
         orange = Color(16737843)
@@ -302,7 +317,9 @@ class tab():
         box.add(labelArea)
         return
 
+    #
     # method that allows the user to choose a file
+    #
     def chooseFile(self, event):
         # try to load the last used directory
         try:
@@ -322,7 +339,9 @@ class tab():
         if(returnVal == JFileChooser.APPROVE_OPTION):
             self.inputFile.text = self.chooser.getSelectedFile().getName()
 
+    #
     # method that gets the time from one valid username and from one invalid username
+    #
     def timeTwoUsers(self, event):
         if (self.curRequest == None):
             return
@@ -332,14 +351,18 @@ class tab():
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
+    #
     # method that shows the time for the user
+    #
     def getTwoUserTimes(self):
         self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
         self.getResults.text += str(self.getTime(self.validUser.text, self.numTries.text)) + "\n"
         self.getResults.text += "Invalid username: " + self.invalidUser.text + " Time: "
         self.getResults.text += str(self.getTime(self.invalidUser.text, self.numTries.text))
 
+    #
     # method that reads the usernames from a file
+    #
     def timeUserList(self, event):
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
@@ -368,7 +391,9 @@ class tab():
            self.fileSubmitError.text = "No File Submitted"
         return
 
+    #
     # method that shows the time from each username for the user
+    #
     def getUserListTimes(self):
         self.getListResults.text = ""
         for i in self.userList:
@@ -376,21 +401,27 @@ class tab():
             self.getListResults.text += str(self.getTime(i, self.listNumTries.text)) + "\n"
         return
 
+    #
     # method that shows the request from one valid username and from one invalid username
+    #
     def showRequestTop(self, event):
         if (not self.showRequestTopIsOn):
             self.twoUserResultOutput = self.getResults.text
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
         self.showRequestTopIsOn = not self.showRequestTopIsOn
 
+    #
     # method that shows the request from a file of usernames
+    #
     def showListRequest(self, event):
         if (not self.showListRequestIsOn):
             self.listResultOutput = self.getListResults.text
         self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
         self.showListRequestIsOn = not self.showListRequestIsOn
 
+    #
     # Swicth from view request to view result and vice versa
+    #
     def showRequest(self, box, button, output, bool):
         if (bool):
             box.text = output
@@ -402,7 +433,9 @@ class tab():
             box.text = helpers.bytesToString(self.curRequest.getRequest())
             button.setText("View results")
 
+    #
     # method that offically gets the time from usernames
+    #
     def getTime(self, paramInput, numTriesText):
         numTries = int(numTriesText)
         # keeps a reference to helpers
@@ -437,7 +470,9 @@ class tab():
         # prints the response to the GUI
         return getTime / numTries
 
+    #
     # method that allows the user to download
+    #
     def downloadResults(self, event):
         if (self.getListResults.text == ""):
             return
@@ -445,7 +480,9 @@ class tab():
         file.write(self.getListResults.text)
         file.close()
 
+    #
     # method that needs to know the path of the download folder to put the file there
+    #
     def get_download_path():
         # returns the default downloads path for linux or windows
         if os.name == 'nt':
@@ -458,6 +495,9 @@ class tab():
         else:
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
+    #
+    #
+    #
     def getRequest(self, messageList):
         self.curRequest = messageList[0]
         self.showRequestTopIsOn = False
