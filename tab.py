@@ -11,7 +11,7 @@ from javax.swing import JButton # for buttons
 from javax.swing import JSeparator # for implementing divider lines
 from javax.swing import JScrollPane # for scroll panes to help with extended text areas
 from javax.swing import JLabel # for labels
-from javax.swing import JFileChooser # for importing and exporting dialog boxes
+from javax.swing import JFileChooser # for importing and exporting file chooser
 from javax.swing.filechooser import FileNameExtensionFilter # for importing and exporting
 from javax.swing.border import EmptyBorder # for an empty/transparent border
 from java.awt import BorderLayout # for panel layouts
@@ -24,7 +24,6 @@ import sys # provides access to some variables used by the interpreter and to fu
 import time # for clock time
 import threading # for multiple activities within a single process
 import os # for splitting the file name and file extension when importing and exporting
-
 #
 # class for the whole UI
 #
@@ -309,13 +308,15 @@ class tab():
 
         # button to view debug output
         viewDeb = JButton("View debug output")
-
-        # create a box that shows the debug output
-        self.debugOutput = JTextArea("", 50, 30)
-
-        # box adds this button
         horizontaldebug.add(viewDeb)
-        horizontaldebug.add(self.debugOutput)
+        debugbox.add(horizontaldebug)
+
+        horizontaldebug = Box.createHorizontalBox()
+        # create a box that shows the debug output
+        self.debugText = JTextArea("", 50, 1)
+        self.debugText.setVisible(False)
+        # box adds this button
+        horizontaldebug.add(self.debugText)
         debugbox.add(horizontaldebug)
 
         return debugbox
@@ -381,7 +382,7 @@ class tab():
     def timeTwoUsers(self, event):
         """ Method that sends the current request to getTwoUserTimes """
         if (self.curRequest == None):
-            self.debugOutput = "Timing Attack does not have a request"
+            self.debugOutput("Timing Attack does not have a request")
             return
         # change button to say show request
         self.showRequestTopIsOn = False
@@ -406,7 +407,7 @@ class tab():
         them to getUserListTimes """
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
-            self.debugOutput = "Timing Attack does not have a request"
+            self.debugOutput("Timing Attack does not have a request")
             return
         try:
             # stores the file
@@ -430,7 +431,7 @@ class tab():
         # it will handle the error and send a message about it
         except:
            self.fileSubmitError.text = "No File Submitted"
-           self.debugOutput = "No File Submitted"
+           self.debugOutput("No File Submitted")
         return
 
 
@@ -465,7 +466,7 @@ class tab():
                 newRequest = helpers.updateParameter(request, buildParam)
 
         if 'newRequest' not in locals():
-            self.debugOutput.text = "Parameter " + paramName + " cannot be found in request"
+            self.debugOutput("Parameter " + paramName + " cannot be found in request")
         # it builds an http service to send a request to the website
         httpService = self.curRequest.getHttpService()
         httpService = helpers.buildHttpService(httpService.getHost(), httpService.getPort(), False)
@@ -549,6 +550,11 @@ class tab():
         else:
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
+
+    def debugOutput(self, message):
+        self.debugText.text = message
+        self.debugText.setVisible(True)
+        print("in debug p 4")
 
     ###################################
     # SECTION 5: TAB RECIEVES REQUEST #
