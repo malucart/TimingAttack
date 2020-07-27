@@ -301,8 +301,12 @@ class tab():
         # button to view debug output
         viewDeb = JButton("View debug output")
 
+        # create a box that shows the debug output
+        self.debugOutput = JTextArea("", 50, 30)
+
         # box adds this button
         horizontaldebug.add(viewDeb)
+        horizontaldebug.add(self.debugOutput)
         debugbox.add(horizontaldebug)
 
         return debugbox
@@ -363,6 +367,7 @@ class tab():
     def timeTwoUsers(self, event):
         """ Method that sends the current request to getTwoUserTimes """
         if (self.curRequest == None):
+            self.debugOutput.print("Timing Attack does not have a request")
             return
         # change button to say show request
         self.showRequestTopIsOn = False
@@ -387,6 +392,7 @@ class tab():
         them to getUserListTimes """
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
+            self.debugOutput.print("Timing Attack does not have a request")
             return
         try:
             # stores the file
