@@ -46,6 +46,10 @@ class tab():
         return self.firstTab
 
 
+    ###########################
+    # SECTION 1: CREATING GUI #
+    ###########################
+
     def createTabGUI(self):
         """ Create GUI for this tabbed pane """
         # create main panel to the whole layout
@@ -369,6 +373,11 @@ class tab():
             self.inputFile.text = self.chooser.getSelectedFile().getName()
 
 
+    ##################################
+    # SECTION 2: SEND TIMING REQUEST #
+    ##################################
+
+
     def timeTwoUsers(self, event):
         """ Method that sends the current request to getTwoUserTimes """
         if (self.curRequest == None):
@@ -473,6 +482,11 @@ class tab():
         return getTime / numTries
 
 
+    ###################################
+    # SECTION 3: VIEW REQUEST BUTTONS #
+    ###################################
+
+
     def showRequestTop(self, event):
         """ Method that shows the request for top box """
         if (not self.showRequestTopIsOn):
@@ -507,6 +521,11 @@ class tab():
             button.setText("View results")
 
 
+    ###############################
+    # SECTION 4: DOWNLOAD BUTTONS #
+    ###############################
+
+
     def downloadResults(self, event):
         """ Method that allows user to download file of times for responses
         for usernames from list """
@@ -529,6 +548,11 @@ class tab():
             return location
         else:
             return os.path.join(os.path.expanduser('~'), 'downloads')
+
+
+    ###################################
+    # SECTION 5: TAB RECIEVES REQUEST #
+    ###################################
 
 
     def getRequest(self, messageList):
