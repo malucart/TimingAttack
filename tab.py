@@ -17,6 +17,7 @@ from javax.swing.border import EmptyBorder # for an empty/transparent border
 from java.awt import BorderLayout # for panel layouts
 from java.awt import Color # for setting a different background on disabled text areas
 from java.awt import Font # for adding bold font to text labels in main tab
+from java.awt import Component # for setting a component
 from java.util import ArrayList # for arraylist
 from java.util import Scanner # for reading file
 import sys # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
@@ -300,6 +301,7 @@ class tab():
     def addLabel(self, text, box):
         labelArea = JLabel(text)
         box.add(labelArea)
+        labelArea.setAlignmentX(Component.LEFT_ALIGNMENT);
         return
 
     #
