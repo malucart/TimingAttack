@@ -200,7 +200,7 @@ class tab():
         # title for the bottom-left area
         self.addTitle("Input Username File", bottomleft)
 
-        # creates a box to input a list of usernames (txt or json file)
+        # creates a box to input a list of usernames (txt file)
         boxHor = Box.createHorizontalBox()
         self.addLabel("Input file: ", boxHor)
         self.inputFile = JButton("Choose file...", actionPerformed=self.chooseFile)
@@ -253,7 +253,7 @@ class tab():
         # title for the bottom-right area
         self.addTitle("Results", bottomright)
 
-        # show results about of each username from txt/json file
+        # show results about of each username from txt file
         self.getListResults = JTextArea("", 50, 30)
 
         # results are not editable
@@ -356,8 +356,8 @@ class tab():
             fileChooserDirectory = ""
 
         self.chooser = JFileChooser(fileChooserDirectory)
-        fileextensions = ["txt", "jason"]
-        filter = FileNameExtensionFilter("TXT & JSON FILES", fileextensions)
+        fileextensions = ["txt"]
+        filter = FileNameExtensionFilter("TXT FILES", fileextensions)
         self.chooser.setFileFilter(filter)
         returnVal = self.chooser.showOpenDialog(self.chooser)
         if(returnVal == JFileChooser.APPROVE_OPTION):
