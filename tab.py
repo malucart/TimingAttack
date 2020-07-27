@@ -150,6 +150,11 @@ class tab():
         # the box adds the parameter input
         boxHor.add(self.parameterName)
 
+        # top-left box adds this box
+        topleft.add(boxHor)
+        # create new horizontal box for number of tries
+        boxHor = Box.createHorizontalBox()
+
         # create a label for the number of tries into the box
         self.addLabel("How many tries would you like to average: ", boxHor)
 
@@ -431,40 +436,6 @@ class tab():
         return
 
 
-    def showRequestTop(self, event):
-        """ Method that shows the request for top box """
-        if (not self.showRequestTopIsOn):
-            self.twoUserResultOutput = self.getResults.text
-        self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
-        if self.twoUserResultOutput:
-            self.showRequestTopIsOn = not self.showRequestTopIsOn
-
-
-    def showListRequest(self, event):
-        """ Method that shows the request from a file of usernames """
-        if (not self.showListRequestIsOn):
-            self.listResultOutput = self.getListResults.text
-        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
-        if self.listResultOutput:
-            self.showListRequestIsOn = not self.showListRequestIsOn
-
-
-    def showRequest(self, box, button, output, bool):
-        """ Switch from view request to view result and vice versa """
-        if (bool):
-            if not output:
-                return
-            else:
-                box.text = output
-                button.setText("View the request")
-
-        else:
-            helpers = self.callbacks.getHelpers()
-            output = box.text
-            box.text = helpers.bytesToString(self.curRequest.getRequest())
-            button.setText("View results")
-
-
     def getTime(self, paramName, paramInput, numTriesText):
         """ Method that takes in a username and returns time taken to get
         its response (called by getTwoUserTimes and getUserListTimes)"""
@@ -500,6 +471,40 @@ class tab():
 
         # return the response
         return getTime / numTries
+
+
+    def showRequestTop(self, event):
+        """ Method that shows the request for top box """
+        if (not self.showRequestTopIsOn):
+            self.twoUserResultOutput = self.getResults.text
+        self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
+        if self.twoUserResultOutput:
+            self.showRequestTopIsOn = not self.showRequestTopIsOn
+
+
+    def showListRequest(self, event):
+        """ Method that shows the request from a file of usernames """
+        if (not self.showListRequestIsOn):
+            self.listResultOutput = self.getListResults.text
+        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
+        if self.listResultOutput:
+            self.showListRequestIsOn = not self.showListRequestIsOn
+
+
+    def showRequest(self, box, button, output, bool):
+        """ Switch from view request to view result and vice versa """
+        if (bool):
+            if not output:
+                return
+            else:
+                box.text = output
+                button.setText("View the request")
+
+        else:
+            helpers = self.callbacks.getHelpers()
+            output = box.text
+            box.text = helpers.bytesToString(self.curRequest.getRequest())
+            button.setText("View results")
 
 
     def downloadResults(self, event):
