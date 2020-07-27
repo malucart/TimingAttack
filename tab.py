@@ -367,7 +367,7 @@ class tab():
     def timeTwoUsers(self, event):
         """ Method that sends the current request to getTwoUserTimes """
         if (self.curRequest == None):
-            self.debugOutput.print("Timing Attack does not have a request")
+            self.debugOutput = "Timing Attack does not have a request"
             return
         # change button to say show request
         self.showRequestTopIsOn = False
@@ -382,9 +382,9 @@ class tab():
         by timeTwoUsers) """
         self.twoUserViewReq.setVisible(True)
         self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
-        self.getResults.text += str(self.getTime(self.validUser.text, self.numTries.text)) + "\n"
+        self.getResults.text += str(self.getTime(self.parameterName.text, self.validUser.text, self.numTries.text)) + "\n"
         self.getResults.text += "Invalid username: " + self.invalidUser.text + " Time: "
-        self.getResults.text += str(self.getTime(self.invalidUser.text, self.numTries.text))
+        self.getResults.text += str(self.getTime(self.parameterName.text, self.invalidUser.text, self.numTries.text))
 
 
     def timeUserList(self, event):
@@ -392,7 +392,7 @@ class tab():
         them to getUserListTimes """
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
-            self.debugOutput.print("Timing Attack does not have a request")
+            self.debugOutput = "Timing Attack does not have a request"
             return
         try:
             # stores the file
@@ -416,6 +416,7 @@ class tab():
         # it will handle the error and send a message about it
         except:
            self.fileSubmitError.text = "No File Submitted"
+           self.debugOutput = "No File Submitted"
         return
 
 
@@ -426,7 +427,7 @@ class tab():
         self.getListResults.text = ""
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
-            self.getListResults.text += str(self.getTime(i, self.listNumTries.text)) + "\n"
+            self.getListResults.text += str(self.getTime(self.fileParameterName.text, i, self.listNumTries.text)) + "\n"
         return
 
 
@@ -464,7 +465,7 @@ class tab():
             button.setText("View results")
 
 
-    def getTime(self, paramInput, numTriesText):
+    def getTime(self, paramName, paramInput, numTriesText):
         """ Method that takes in a username and returns time taken to get
         its response (called by getTwoUserTimes and getUserListTimes)"""
         numTries = int(numTriesText)
@@ -474,8 +475,7 @@ class tab():
         request = self.curRequest.getRequest()
         # Get request information
         requestInfo = helpers.analyzeRequest(request)
-        # gets the parameter
-        paramName = self.parameterName.text
+
         # loop through parameters
         for i in requestInfo.getParameters():
             # find username parameter and change its value
@@ -484,9 +484,10 @@ class tab():
                 buildParam = helpers.buildParameter(paramName, paramInput, i.getType())
                 newRequest = helpers.updateParameter(request, buildParam)
 
+        if 'newRequest' not in locals():
+            self.debugOutput.text = "Parameter " + paramName + " cannot be found in request"
         # it builds an http service to send a request to the website
         httpService = self.curRequest.getHttpService()
-        ### requestUrl = str(requestInfo.getHost())
         httpService = helpers.buildHttpService(httpService.getHost(), httpService.getPort(), False)
 
         getTime = 0
