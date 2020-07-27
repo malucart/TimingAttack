@@ -307,8 +307,9 @@ class tab():
         self.addLabel("Something went wrong?", horizontaldebug)
 
         # button to view debug output
-        viewDeb = JButton("View debug output")
-        horizontaldebug.add(viewDeb)
+        self.debugOn = False
+        self.viewDebug = JButton("View debug output", actionPerformed=self.showDebug)
+        horizontaldebug.add(self.viewDebug)
         debugbox.add(horizontaldebug)
 
         horizontaldebug = Box.createHorizontalBox()
@@ -554,7 +555,18 @@ class tab():
     def debugOutput(self, message):
         self.debugText.text = message
         self.debugText.setVisible(True)
-        print("in debug p 4")
+        self.viewDebug.setText("Close debug output")
+        self.debugOn = True
+
+    def showDebug(self, event):
+        if self.debugOn:
+            self.debugText.setVisible(False)
+            self.viewDebug.setText("View debug output")
+            self.debugOn = False
+        else:
+            self.debugText.setVisible(True)
+            self.viewDebug.setText("Close debug output")
+            self.debugOn = True
 
     ###################################
     # SECTION 5: TAB RECIEVES REQUEST #
