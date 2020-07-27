@@ -29,26 +29,25 @@ import os # for splitting the file name and file extension when importing and ex
 # class for the whole UI
 #
 class tab():
-    #
-    # method that is automatically called when memory is allocated for a new object
-    #
+
     def __init__(self, callbacks):
+        """ Method automatically called when memory is
+        allocated for a new object, initiates tab object """
         print("Created a tab")
         self.callbacks = callbacks
         self.curRequest = None
 
         self.createTabGUI()
 
-    #
-    # get the tabbed pane on the top left of the timing attack tab
-    #
+
     def getFirstTab(self):
+        """ Get the JPanel that represents the object's
+        Timing Attack tab """
         return self.firstTab
 
-    #
-    # create GUI for this tabbed pane
-    #
+
     def createTabGUI(self):
+        """ Create GUI for this tabbed pane """
         # create main panel to the whole layout
         self.firstTab = JPanel()
         self.firstTab.layout = BorderLayout()
@@ -286,28 +285,26 @@ class tab():
         # the whole tab is returned
         return self.firstTab
 
-    #
-    # method that creates the background box
-    #
+
     def getBorderVertBox(self):
+        """ Method that creates box with a border (padding)
+        to put other JComponents in """
         boxVert = Box.createVerticalBox()
         bord = EmptyBorder(10, 10, 10, 10)
         boxVert.setBorder(bord)
         return boxVert
 
-    #
-    # method that creates the label
-    #
+
     def addLabel(self, text, box):
+        """ Method that creates a label and adds it to a box """
         labelArea = JLabel(text)
         box.add(labelArea)
         labelArea.setAlignmentX(Component.LEFT_ALIGNMENT);
         return
 
-    #
-    # method that add titles for the white boxes
-    #
+
     def addTitle(self, text, box):
+        """ Method that adds titles for boxes """
         # Create orange color variable
         orange = Color(16737843)
         # Create font for titles
@@ -319,10 +316,9 @@ class tab():
         box.add(labelArea)
         return
 
-    #
-    # method that allows the user to choose a file
-    #
+
     def chooseFile(self, event):
+        """ Method that allows the user to choose a file of usernames """
         # try to load the last used directory
         try:
             # load the directory for future imports/exports
@@ -341,10 +337,9 @@ class tab():
         if(returnVal == JFileChooser.APPROVE_OPTION):
             self.inputFile.text = self.chooser.getSelectedFile().getName()
 
-    #
-    # method that gets the time from one valid username and from one invalid username
-    #
+
     def timeTwoUsers(self, event):
+        """ Method that sends the current request to getTwoUserTimes """
         if (self.curRequest == None):
             return
         # change button to say show request
@@ -353,19 +348,20 @@ class tab():
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
-    #
-    # method that shows the time for the user
-    #
+
     def getTwoUserTimes(self):
+        """ Method that prints the time taken to return responses
+        from one valid username and from one invalid username (called
+        by timeTwoUsers) """
         self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
         self.getResults.text += str(self.getTime(self.validUser.text, self.numTries.text)) + "\n"
         self.getResults.text += "Invalid username: " + self.invalidUser.text + " Time: "
         self.getResults.text += str(self.getTime(self.invalidUser.text, self.numTries.text))
 
-    #
-    # method that reads the usernames from a file
-    #
+
     def timeUserList(self, event):
+        """ Method that reads the usernames from file and sends
+        them to getUserListTimes """
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
             return
@@ -393,38 +389,35 @@ class tab():
            self.fileSubmitError.text = "No File Submitted"
         return
 
-    #
-    # method that shows the time from each username for the user
-    #
+
     def getUserListTimes(self):
+        """ Method that prints the time taken to return responses
+        for each username from file (called by timeUserList) """
         self.getListResults.text = ""
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
             self.getListResults.text += str(self.getTime(i, self.listNumTries.text)) + "\n"
         return
 
-    #
-    # method that shows the request from one valid username and from one invalid username
-    #
+
     def showRequestTop(self, event):
+        """ Method that shows the request for top box """
         if (not self.showRequestTopIsOn):
             self.twoUserResultOutput = self.getResults.text
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
         self.showRequestTopIsOn = not self.showRequestTopIsOn
 
-    #
-    # method that shows the request from a file of usernames
-    #
+
     def showListRequest(self, event):
+        """ Method that shows the request from a file of usernames """
         if (not self.showListRequestIsOn):
             self.listResultOutput = self.getListResults.text
         self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
         self.showListRequestIsOn = not self.showListRequestIsOn
 
-    #
-    # Swicth from view request to view result and vice versa
-    #
+
     def showRequest(self, box, button, output, bool):
+        """ Switch from view request to view result and vice versa """
         if (bool):
             box.text = output
             button.setText("View the request")
@@ -435,10 +428,10 @@ class tab():
             box.text = helpers.bytesToString(self.curRequest.getRequest())
             button.setText("View results")
 
-    #
-    # method that offically gets the time from usernames
-    #
+
     def getTime(self, paramInput, numTriesText):
+        """ Method that takes in a username and returns time taken to get
+        its response (called by getTwoUserTimes and getUserListTimes)"""
         numTries = int(numTriesText)
         # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
@@ -469,23 +462,22 @@ class tab():
             makeRequest.getResponse()
             getTime += time.clock() - start
 
-        # prints the response to the GUI
+        # return the response
         return getTime / numTries
 
-    #
-    # method that allows the user to download
-    #
+
     def downloadResults(self, event):
+        """ Method that allows user to download file of times for responses
+        for usernames from list """
         if (self.getListResults.text == ""):
             return
         file = open(get_download_path() + "/downloadresults.txt", "w")
         file.write(self.getListResults.text)
         file.close()
 
-    #
-    # method that needs to know the path of the download folder to put the file there
-    #
+
     def get_download_path():
+        """ Method to find path of download folder (called by downloadResults) """
         # returns the default downloads path for linux or windows
         if os.name == 'nt':
             import winreg
@@ -497,10 +489,9 @@ class tab():
         else:
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
-    #
-    #
-    #
+
     def getRequest(self, messageList):
+        """ Method that stores the request sent from proxy """
         self.curRequest = messageList[0]
         self.showRequestTopIsOn = False
         self.twoUserResultOutput = self.getResults.text

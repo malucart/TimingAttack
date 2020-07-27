@@ -21,14 +21,12 @@ try:
 except ImportError:
     pass
 
-#
+
 # Burp extender main class
-#
 class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
-    #
-    # implement IBurpExtender when the extension is loaded
-    #
+
     def registerExtenderCallbacks(self, callbacks):
+        """ Implement IBurpExtender when the extension is loaded """
         print "Loading timing attack extension\n"
 
         # required for easier debugging: https://github.com/securityMB/burp-exceptions
@@ -53,22 +51,19 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         print "Extension loaded."
         return
 
-    #
-    # Burp Suite uses this method to obtain the caption that should appear on the custom tab when it is displayed
-    #
+
     def getTabCaption(self):
+        """ Burp Suite uses this method to obtain the caption that should appear on the custom tab when it is displayed """
         return "Timing Attack"
 
-    #
-    # Burp Suite uses this method to obtain the component that should be used as the contents of the custom tab when it is displayed
-    #
+
     def getUiComponent(self):
+        """ Burp Suite uses this method to obtain the component that should be used as the contents of the custom tab when it is displayed """
         return self.tab
 
-    #
-    # create GUI
-    #
+
     def createGUI(self):
+        """ Create overall UI for extension, with an inner tab """
         # create the panel that border layout lays out a container, arranging and resizing its components to fit
         self.tab = JPanel(BorderLayout())
 
@@ -82,10 +77,10 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         self.tabList.append(t)
         self.tabbedPane.addTab("1", self.tabList[0].getFirstTab())
 
-    #
-    # proxy -> action -> Send to Timing Attack (menu item created)
-    #
+
     def createMenuItems(self, invocation):
+        """ Create a menu item on other tabs to allow them to send
+        requests to Timing Attack """
         self.context = invocation
         menuList = ArrayList()
         self.messageList = invocation.getSelectedMessages()
@@ -94,10 +89,10 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         menuList.add(menuItem)
         return menuList
 
-    #
-    # proxy -> action -> Send to Timing Attack (request sent)
-    #
+
     def requestSent(self, event):
+        """ A request sent from another tab to the Timing Attack (called
+        when another tab presses the menu item from createMenuItems) """
         messageList = self.messageList
         # highlight timing attack tab
         self.highlightTab()
@@ -115,10 +110,10 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         self.tabList[tabNum].getRequest(messageList)
         self.tabbedPane.setSelectedIndex(tabNum)
 
-    #
-    # highlight timing attack tab
-    #
+
     def highlightTab(self):
+        """ Highlight the Timing Attack tab when a request is sent
+        (called by requestSent) """
         parentTabbedPane = self.getUiComponent().getParent()
         if (parentTabbedPane != None):
             for i in range(parentTabbedPane.getTabCount()):
@@ -126,10 +121,9 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
                     parentTabbedPane.setBackgroundAt(i, Color(16737843));
                     threading.Timer(5, self.unHighlightTab, [i]).start()
 
-    #
-    # unhighlight timing attack tab
-    #
+
     def unHighlightTab(self, componentNum):
+        """ Unhighlight Timing Attack tab after 5 seconds """
         parentTabbedPane = self.getUiComponent().getParent()
         parentTabbedPane.setBackgroundAt(componentNum, Color(000000));
 
