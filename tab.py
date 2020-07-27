@@ -552,24 +552,34 @@ class tab():
             return os.path.join(os.path.expanduser('~'), 'downloads')
 
 
+    ###########################
+    # SECTION 5: DEBUG BUTTON #
+    ###########################
+
+
     def debugOutput(self, message):
+        """ Write a debug message in the debug box """
         self.debugText.text = message
         self.debugText.setVisible(True)
         self.viewDebug.setText("Close debug output")
         self.debugOn = True
 
+
     def showDebug(self, event):
+        """ Open or close debug box """
         if self.debugOn:
             self.debugText.setVisible(False)
             self.viewDebug.setText("View debug output")
             self.debugOn = False
+            self.debugText.text = ""
         else:
             self.debugText.setVisible(True)
             self.viewDebug.setText("Close debug output")
             self.debugOn = True
 
+
     ###################################
-    # SECTION 5: TAB RECIEVES REQUEST #
+    # SECTION 6: TAB RECIEVES REQUEST #
     ###################################
 
 
