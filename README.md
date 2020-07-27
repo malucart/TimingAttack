@@ -1,15 +1,15 @@
-# TimingAttack
+# TimingAttack: A Burp Suite Extension
 
-<h3>Context</h3>
-<p>Burp Suite is used by a huge percentage of security professionals, especially penetration testers. It is often used as an HTTP interception tool. Burp Suite's utility is greatly improved by a variety of plugins, many of which are free to use.</p>
-<p>TimingAttack is also a plugin open source to help pentesters for guessing if a username is valid or not by how long time the system takes to respond to an fail authentication. And then, comparing that to how long the system takes to respond for a valid login. It means that if attackers can guess one valid username, then they can guess much more using the same technique.  Best part of it, it is totally automated by the attacker.</p>
+### Context
+Burp Suite is used by a huge percentage of security professionals, especially penetration testers. It is often used as an HTTP interception tool. Burp Suite's utility is greatly improved by a variety of plugins, many of which are free to use.
+TimingAttack is also a plugin open source to help pentesters for guessing if a username is valid or not by how long time the system takes to respond to an fail authentication. And then, comparing that to how long the system takes to respond for a valid login. It means that if attackers can guess one valid username, then they can guess much more using the same technique.  Best part of it, it is totally automated by the attacker.
 
 ## What is a Timing Attack?
 A timing attack is ...
 
 ## Setting up the Extension
 #### Setting up a Python Environment on Burp Suite
-First of all, you will need to download Jython Standalone (link here: ) in order to be able to run python extensions in Burp Suite.
+First of all, you will need to download Jython Standalone Jar (link here: https://www.jython.org/download.html) in order to be able to run python extensions in Burp Suite.
 Navigate to the "Extender" tab on Burp Suite, and choose the sub-tab "Options". Under "Python Environment", select your standalone jar file from your file browser in the first selector.
 #### Running the Extension
 If you have not run a python extension on Burp Suite before, please see "Setting up a python environment on Burp Suite" first.
