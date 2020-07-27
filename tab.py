@@ -375,6 +375,7 @@ class tab():
         """ Method that prints the time taken to return responses
         from one valid username and from one invalid username (called
         by timeTwoUsers) """
+        self.twoUserViewReq.setVisible(True)
         self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
         self.getResults.text += str(self.getTime(self.validUser.text, self.numTries.text)) + "\n"
         self.getResults.text += "Invalid username: " + self.invalidUser.text + " Time: "
@@ -415,6 +416,7 @@ class tab():
     def getUserListTimes(self):
         """ Method that prints the time taken to return responses
         for each username from file (called by timeUserList) """
+        self.listViewReq.setVisible(True)
         self.getListResults.text = ""
         for i in self.userList:
             self.getListResults.text += "Username: " + i + " Time: "
@@ -530,3 +532,5 @@ class tab():
         self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
         self.showRequestTopIsOn = True
         self.showListRequestIsOn = True
+        self.twoUserViewReq.setVisible(False)
+        self.listViewReq.setVisible(False)
