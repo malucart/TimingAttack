@@ -55,10 +55,54 @@ class tab():
         # create a big box to organize the layout inside of it
         pagebox = Box.createVerticalBox()
 
-        # create a box for top-half area
+        # create a box for top-half area and add to the page
         tophalf = Box.createHorizontalBox()
+        pagebox.add(tophalf)
 
-        # create a box inside of the top-half area in the top-left
+        # create top-left and top-right boxes
+        topleft = self.createTopLeftBox()
+        topright = self.createTopRightBox()
+        # add top-left and top-right boxes to top half
+        tophalf.add(topleft)
+        tophalf.add(topright)
+
+
+        # draw a horizontal line right after top-half box
+        sep = JSeparator()
+        pagebox.add(sep)
+
+
+        # create a box for bottom-half area and add to the page
+        bottomhalf = Box.createHorizontalBox()
+        pagebox.add(bottomhalf)
+
+        # create bottom-left and bottom-right boxes
+        bottomleft = self.createBottomLeftBox()
+        bottomright = self.createBottomRightBox()
+        # add bottom-left and bottom-right boxes to bottom-half
+        bottomhalf.add(bottomleft)
+        bottomhalf.add(bottomright)
+
+
+        # draw a horizontal line after bottom-half box
+        sep = JSeparator()
+        pagebox.add(sep)
+
+
+        # create a box for debugging output and add to page
+        debugbox = self.createDebugBox()
+        pagebox.add(debugbox)
+
+
+        # timing attack tab adds the big box
+        self.firstTab.add(pagebox)
+
+        # the whole tab is returned
+        return self.firstTab
+
+
+    def createTopLeftBox(self):
+        """ Method to create the top left box """
         topleft = self.getBorderVertBox()
 
         # title for the top-left area
@@ -122,10 +166,11 @@ class tab():
         submit = JButton("submit", actionPerformed=self.timeTwoUsers)
         topleft.add(submit)
 
-        # top-left is added into the top-half
-        tophalf.add(topleft)
+        return topleft
 
-        # create a box inside of the top-half area in the top-right
+
+    def createTopRightBox(self):
+        """ Method to create the top right box """
         topright = self.getBorderVertBox()
 
         # title for the top-right area
@@ -146,20 +191,11 @@ class tab():
         self.twoUserViewReq = JButton("View the request", actionPerformed=self.showRequestTop)
         topright.add(self.twoUserViewReq)
 
-        # top-right is added into the top-half
-        tophalf.add(topright)
+        return topright
 
-        # top-half is added into the big box
-        pagebox.add(tophalf)
 
-        # draw a horizontal line right after top-half box
-        sep = JSeparator()
-        pagebox.add(sep)
-
-        # create a box for bottom-half area
-        bottomhalf = Box.createHorizontalBox()
-
-        # create a bottom-left box
+    def createBottomLeftBox(self):
+        """ Method to create the bottom left box """
         bottomleft = self.getBorderVertBox()
         # title for the bottom-left area
         self.addTitle("Input Username File", bottomleft)
@@ -207,10 +243,11 @@ class tab():
         bottomleft.add(submit)
         bottomleft.add(self.fileSubmitError)
 
-        # bottom-left is added into the bottom-half
-        bottomhalf.add(bottomleft)
+        return bottomleft
 
-        # creates a box inside of the bottom-half area in the bottom-right
+
+    def createBottomRightBox(self):
+        """ Method to create the bottom right box """
         bottomright = self.getBorderVertBox()
 
         # title for the bottom-right area
@@ -250,19 +287,11 @@ class tab():
         # bottom-right box adds the box which stores the buttons funcinalities
         bottomright.add(boxHor)
 
-        # bottom-right is added into the bottom-half
-        bottomhalf.add(bottomright)
+        return bottomright
 
-        # bottom-half is added into the big box
-        pagebox.add(bottomhalf)
 
-        # draws a horizontal line right after the bottom-half box
-        sep = JSeparator()
-
-        # big box stores this horizontal line
-        pagebox.add(sep)
-
-        # create a box for debugging output
+    def createDebugBox(self):
+        """ Method to create the debug box """
         debugbox = self.getBorderVertBox()
         horizontaldebug = Box.createHorizontalBox()
 
@@ -276,14 +305,7 @@ class tab():
         horizontaldebug.add(viewDeb)
         debugbox.add(horizontaldebug)
 
-        # big box adds this box
-        pagebox.add(debugbox)
-
-        # timing attack tab adds the big box
-        self.firstTab.add(pagebox)
-
-        # the whole tab is returned
-        return self.firstTab
+        return debugbox
 
 
     def getBorderVertBox(self):
