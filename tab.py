@@ -427,7 +427,8 @@ class tab():
         if (not self.showRequestTopIsOn):
             self.twoUserResultOutput = self.getResults.text
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
-        self.showRequestTopIsOn = not self.showRequestTopIsOn
+        if self.twoUserResultOutput:
+            self.showRequestTopIsOn = not self.showRequestTopIsOn
 
 
     def showListRequest(self, event):
@@ -435,14 +436,18 @@ class tab():
         if (not self.showListRequestIsOn):
             self.listResultOutput = self.getListResults.text
         self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
-        self.showListRequestIsOn = not self.showListRequestIsOn
+        if self.listResultOutput:
+            self.showListRequestIsOn = not self.showListRequestIsOn
 
 
     def showRequest(self, box, button, output, bool):
         """ Switch from view request to view result and vice versa """
         if (bool):
-            box.text = output
-            button.setText("View the request")
+            if not output:
+                return
+            else:
+                box.text = output
+                button.setText("View the request")
 
         else:
             helpers = self.callbacks.getHelpers()
@@ -515,7 +520,13 @@ class tab():
     def getRequest(self, messageList):
         """ Method that stores the request sent from proxy """
         self.curRequest = messageList[0]
+        # Make sure show request tabs start out empty
         self.showRequestTopIsOn = False
+        self.showListRequestIsOn = False
         self.twoUserResultOutput = self.getResults.text
+        self.listResultOutput = self.getListResults.text
+        # Show request in both top and bottom windows
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
-        self.showRequestTopIsOn = not self.showRequestTopIsOn
+        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
+        self.showRequestTopIsOn = True
+        self.showListRequestIsOn = True
