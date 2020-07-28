@@ -18,7 +18,7 @@ After doing that, make sure you download both extension.py and tab.py files from
 On Burp Suite extension, navigate to the "Extender" tab. Click the "add" button in the top half of the page, and you will see a menu pop up. For the extension type, click "Python"; then select the "extension.py" file for the extension file, and click next. You should see a new tab that says "Timing Attack" among your Burp Suite tabs.
 
 ## Using the Extension
-find the request you want on the proxy and click "send to timing attack"
+To use the extension, you must intercept an HTTP request that sends with it a username. Once you find this request in proxy, right-click to see a menu pop up, and then click "Send to Timing Attack". If you open the Timing Attack tab now, you will see the request in the two boxes on the right side of the screen.
 #### Valid and invalid usernames
 do this....
 #### Usernames from file
