@@ -6,7 +6,7 @@ Burp Suite is used by a huge percentage of security professionals, especially pe
 TimingAttack is also a plugin open source to help pentesters for guessing if a username is valid or not by how long time the system takes to respond to an fail authentication. And then, comparing that to how long the system takes to respond for a valid login. It means that if attackers can guess one valid username, then they can guess much more using the same technique.  Best part of it, it is totally automated by the attacker.
 
 ## What is a Timing Attack?
-A timing attack is ...
+When a system does not take constant time to return a result for any username inputted, an attacker can use this to inflitrate it. Knowing how long a response takes for one valid and one invalid username, the attacker can check how long other usernames take to get a response, and use that to try to guess which usernames are valid. This Burp Suite extension was made to allow pen testers to easily verify whether a website is susceptible to this sort of attack.
 
 ## Setting up the Extension
 #### Setting up a Python Environment on Burp Suite
