@@ -20,9 +20,9 @@ On Burp Suite extension, navigate to the "Extender" tab. Click the "add" button 
 ## Using the Extension
 To use the extension, you must intercept an HTTP request that sends with it a username. Once you find this request in proxy, right-click to see a menu pop up, and then click "Send to Timing Attack". If you open the Timing Attack tab now, you will see the request in the two boxes on the right side of the screen.
 #### Valid and invalid usernames
-do this....
+In looking for timing attacks, it is often useful to compare the difference in the time to get a response for a valid username against an invalid username. To do that in this extension, simply enter the valid and invalid usernames in the labeled fields. Then, enter the name of the username parameter used in the request in the "enter parameter" field. Finally, because it is often more useful to average how long it took to get a response from several tries, enter how many tries you want to average right below, and submit. You should see the results on the right side of the screen.
 #### Usernames from file
-do that...
+Sometimes you might want to check how long each username in a list of usernames takes to get a response, to find out which ones are valid and which are not. To do that, simply choose your txt file containing the username list. For the parameter separator, put down what characters separate the usernames in your list (for example, if your list has "user, admin, test" then the characters ", " would be the separator). Finally, once again put down how many request times you would like to average for each username, and click submit. You will now see a scrollable list of all the times on the right. Moreover, if you would like to download the resulting list of usernames and result times, simply click the download button, and the file will appear in your computer's downloads.
 
 ## Setting up the Testing Site
 Want to test this extension on our website first? This is how you set up a testing site:
