@@ -681,9 +681,9 @@ class tab():
         # by timeTwoUsers)
         self.twoUserViewReq.setVisible(True)
         self.showResults.text = "Valid username: " + self.addValid.text + "; Time: "
-        self.showResults.text += str(self.getTime(self.parameter.text, self.addValid.text, self.addAverage.text)) + "\n"
+        self.showResults.text += str(self.getTime(self.addParameter.text, self.addValid.text, self.addAverage.text)) + "\n"
         self.showResults.text += "Invalid username: " + self.addInvalid.text + "; Time: "
-        self.showResults.text += str(self.getTime(self.parameter.text, self.addInvalid.text, self.addAverage.text))
+        self.showResults.text += str(self.getTime(self.addParameter.text, self.addInvalid.text, self.addAverage.text))
 
 
     def timeUserList(self, event):
