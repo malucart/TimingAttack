@@ -211,7 +211,7 @@ class tab():
                                 .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(self.listViewReq)))
                             .addGap(10)
-                            .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE))))))
+                            .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 600, swing.GroupLayout.PREFERRED_SIZE))))))
 
 
         layout.setVerticalGroup(
@@ -317,7 +317,7 @@ class tab():
                         .addGap(10)
                         .addComponent(self.viewDebug)
                         .addGap(10)
-                        .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 122, swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)))))
         return
 
 
@@ -844,6 +844,7 @@ class tab():
         # Write a debug message in the debug box
         self.debugText.text = message
         self.debugText.setVisible(True)
+        # debugTextScroll = swing.JScrollPane(self.debugText)  --> I tried to put scroll here
         self.viewDebug.setText("Close Debug Output")
         self.debugOn = True
 
@@ -857,6 +858,7 @@ class tab():
             self.debugText.text = ""
         else:
             self.debugText.setVisible(True)
+            # debugTextScroll = swing.JScrollPane(self.debugText) --> I tried to put scroll here
             self.viewDebug.setText("Close Debug Output")
             self.debugOn = True
 
