@@ -120,7 +120,7 @@ class tab():
         self.resultTitleList.setForeground(Color(255,102,51))
         self.showResultsList = swing.JTextArea("")
         self.showResultsList.setEditable(False)
-        #showListResultsScroll = swing.JScrollPane(self.showResultsList)
+        showResultsListScroll = swing.JScrollPane(self.showResultsList)
 
         self.separatorList = swing.JLabel("Separator")
         self.separatorList.setFont(Font("Tahoma", 0, 12))
@@ -139,6 +139,13 @@ class tab():
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewReq = swing.JButton("View the Request", actionPerformed=self.showListRequest)
+
+
+        self.somethingWrong = swing.JLabel("Something Wrong?")
+        self.debugOn = False
+        self.viewDebug = JButton("View debug output", actionPerformed=self.showDebug)
+        self.debugText = swing.JTextArea("")
+        self.debugText.setVisible(False)
 
         layout = swing.GroupLayout(self.firstTab)
         self.firstTab.setLayout(layout)
@@ -175,7 +182,8 @@ class tab():
                             .addComponent(self.inputFileButton)
                             .addComponent(self.separatorList)
                             .addComponent(self.parameterList)
-                            .addComponent(self.averageList))
+                            .addComponent(self.averageList)
+                            .addComponent(self.somethingWrong))
                             .addGap(12)
                         .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                             .addComponent(self.addValid, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
@@ -186,16 +194,24 @@ class tab():
                             .addComponent(self.addSeparatorList, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(self.addParameterList, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(self.addAverageList, swing.GroupLayout.PREFERRED_SIZE, 80, swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(self.submitButton2))
+                            .addComponent(self.submitButton2)
+                            .addComponent(self.viewDebug))
                         .addGap(50)
                         # top right
                         .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                             .addComponent(self.showResults, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(self.twoUserViewReq)
                             .addComponent(self.resultTitleList)
-                            .addComponent(self.showResultsList, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(self.downloadResultList)
-                            .addComponent(self.listViewReq))))))
+                            .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
+                            # buttons right
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(self.downloadResultList))
+                                .addGap(15)
+                                .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(self.listViewReq)))
+                            .addGap(10)
+                            .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE))))))
 
 
         layout.setVerticalGroup(
@@ -244,6 +260,7 @@ class tab():
                     # right
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(self.showResults, swing.GroupLayout.PREFERRED_SIZE, 120, swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(5)
                 # buttons + titles
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
@@ -280,7 +297,8 @@ class tab():
                                 .addComponent(self.addAverageList, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(5)
                         .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(self.showResultsList, swing.GroupLayout.PREFERRED_SIZE, 120, swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 122, swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(5)
                 # buttons
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
@@ -288,8 +306,17 @@ class tab():
                         .addGap(10)
                         .addComponent(self.downloadResultList)
                         .addGap(10)
-                        .addComponent(self.listViewReq))
-                        .addGap(10))))
+                        .addComponent(self.listViewReq)))
+                .addGap(30)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(self.somethingWrong)
+                        .addGap(10)
+                        .addComponent(self.debugText)
+                        .addGap(10)
+                        .addComponent(self.viewDebug)
+                        .addGap(10)
+                        .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 122, swing.GroupLayout.PREFERRED_SIZE)))))
 
 
         """ Create GUI for this tabbed pane """
@@ -768,13 +795,13 @@ class tab():
                 return
             else:
                 box.text = output
-                button.setText("View the request")
+                button.setText("View the Request")
 
         else:
             helpers = self.callbacks.getHelpers()
             output = box.text
             box.text = helpers.bytesToString(self.curRequest.getRequest())
-            button.setText("View results")
+            button.setText("View Results")
 
 
     ###############################
@@ -815,7 +842,7 @@ class tab():
         # Write a debug message in the debug box
         self.debugText.text = message
         self.debugText.setVisible(True)
-        self.viewDebug.setText("Close debug output")
+        self.viewDebug.setText("Close Debug Output")
         self.debugOn = True
 
 
@@ -823,12 +850,12 @@ class tab():
         # Open or close debug box
         if self.debugOn:
             self.debugText.setVisible(False)
-            self.viewDebug.setText("View debug output")
+            self.viewDebug.setText("View Debug Output")
             self.debugOn = False
             self.debugText.text = ""
         else:
             self.debugText.setVisible(True)
-            self.viewDebug.setText("Close debug output")
+            self.viewDebug.setText("Close Debug Output")
             self.debugOn = True
 
 
