@@ -1,3 +1,16 @@
+"""
+Name:           Timing Attack
+Date:           7/29/2020
+Author:         inbarmada & louisa
+Description:    TimingAttack is open source plugin to help pentesters for guessing if a username is valid or not by how long time
+                the system takes to respond to an fail authentication. And then, comparing that to how long the system takes to
+                respond for a valid login. It means that if attackers can guess one valid username, then they can guess much more
+                using the same technique. Best part of it, it is totally automated by the attacker.
+Copyright (c) 2020, louisa & inbarmada
+All rights reserved.
+Please see the attached LICENSE file for additional licensing information.
+"""
+
 from burp import IBurpExtender # for the extension
 from burp import ITab # for creating an extension tab
 from burp import IExtensionHelpers # for helper methods

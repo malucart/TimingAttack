@@ -1,3 +1,16 @@
+"""
+Name:           Timing Attack
+Date:           7/29/2020
+Author:         inbarmada & louisa
+Description:    TimingAttack is open source plugin to help pentesters for guessing if a username is valid or not by how long
+                the system takes to respond to an fail authentication. And then, comparing that to how long the system takes
+                to respond for a valid login. It means that if attackers can guess one valid username, then they can guess
+                much more using the same technique. Best part of it, it is totally automated by the attacker.
+Copyright (c) 2020, louisa & inbarmada
+All rights reserved.
+Please see the attached LICENSE file for additional licensing information.
+"""
+
 from burp import IBurpExtender # for the extension
 from burp import ITab # for creating an extension tab
 from burp import IExtensionHelpers # for helper methods
@@ -12,12 +25,17 @@ from javax.swing import JSeparator # for implementing divider lines
 from javax.swing import JScrollPane # for scroll panes to help with extended text areas
 from javax.swing import JLabel # for labels
 from javax.swing import JFileChooser # for importing and exporting file chooser
+from javax.swing import BoxLayout;
+from javax.swing import JDialog
+from javax.swing import GroupLayout
+from javax import swing
 from javax.swing.filechooser import FileNameExtensionFilter # for importing and exporting
 from javax.swing.border import EmptyBorder # for an empty/transparent border
 from java.awt import BorderLayout # for panel layouts
 from java.awt import Color # for setting a different background on disabled text areas
 from java.awt import Font # for adding bold font to text labels in main tab
 from java.awt import Component # for setting a component
+from java.awt import Dimension
 from java.util import ArrayList # for arraylist
 from java.util import Scanner # for reading file
 import sys # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
@@ -50,13 +68,244 @@ class tab():
     ###########################
 
     def createTabGUI(self):
+
+        self.firstTab = JPanel()
+        self.titleTop = JLabel("Timing Attack")
+        self.titleTop.setFont(Font("Tahoma", 1, 14))
+        self.titleTop.setForeground(Color(255,102,51))
+
+        self.infoTop = JLabel("Timing Attack is a open source extention to inform how long the system takes to respond for a valid and an invalid authentication.")
+        self.infoTop.setFont(Font("Tahoma", 0, 11))
+
+        self.addTitle = JLabel("Enter a Valid and an Invalid Username")
+        self.addTitle.setFont(Font("Tahoma", 1, 13))
+        self.addTitle.setForeground(Color(255,102,51))
+
+        self.validUsername = swing.JLabel("Valid Username")
+        self.validUsername.setFont(Font("Tahoma", 0, 12))
+        self.invalidUsername = swing.JLabel("Invalid Username")
+        self.invalidUsername.setFont(Font("Tahoma", 0, 12))
+        self.parameter = swing.JLabel("Parameter")
+        self.parameter.setFont(Font("Tahoma", 0, 12))
+        self.average = swing.JLabel("Quantity to Get Average Time")
+        self.average.setFont(Font("Tahoma", 0, 12))
+
+        self.addValid = swing.JTextField("")
+        self.addInvalid = swing.JTextField("")
+        self.addParameter = swing.JTextField("")
+        self.addAverage = swing.JTextField("")
+
+        self.submitButton1 = swing.JButton("Submit", actionPerformed=self.timeTwoUsers)
+
+        self.resultTitle = swing.JLabel("Result")
+        self.resultTitle.setFont(Font("Tahoma", 1, 13))
+        self.resultTitle.setForeground(Color(255,102,51))
+        self.showResults = swing.JTextArea("")
+        self.showResults.setEditable(False)
+
+        self.showRequestTopIsOn = False
+        self.twoUserResultOutput = ""
+        self.twoUserViewReq = swing.JButton("View the Request", actionPerformed=self.showRequestTop)
+
+        self.bar = swing.JSeparator(swing.SwingConstants.HORIZONTAL)
+
+        self.addTitleFile = swing.JLabel("Input Username File")
+        self.addTitleFile.setFont(Font("Tahoma", 1, 13))
+        self.addTitleFile.setForeground(Color(255,102,51))
+
+        self.inputFileButton = swing.JButton("Choose File...", actionPerformed=self.chooseFile)
+
+        self.resultTitleList = swing.JLabel("Result")
+        self.resultTitleList.setFont(Font("Tahoma", 1, 13))
+        self.resultTitleList.setForeground(Color(255,102,51))
+        self.showResultsList = swing.JTextArea("")
+        self.showResultsList.setEditable(False)
+        #showListResultsScroll = swing.JScrollPane(self.showResultsList)
+
+        self.separatorList = swing.JLabel("Separator")
+        self.separatorList.setFont(Font("Tahoma", 0, 12))
+        self.parameterList = swing.JLabel("Parameter")
+        self.parameterList.setFont(Font("Tahoma", 0, 12))
+        self.averageList = swing.JLabel("Quantity to Get Average Time")
+        self.averageList.setFont(Font("Tahoma", 0, 12))
+
+        self.addSeparatorList = swing.JTextField("")
+        self.addParameterList = swing.JTextField("")
+        self.addAverageList = swing.JTextField("")
+
+        self.submitButton2 = swing.JButton("Submit", actionPerformed=self.timeUserList)
+        self.downloadResultList = JButton("Download Results", actionPerformed=self.downloadResults)
+
+        self.showListRequestIsOn = False
+        self.listResultOutput = ""
+        self.listViewReq = swing.JButton("View the Request", actionPerformed=self.showListRequest)
+
+        layout = swing.GroupLayout(self.firstTab)
+        self.firstTab.setLayout(layout)
+
+
+
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+            # whole layout
+            .addGroup(layout.createSequentialGroup()
+                .addGap(15)
+                # title + description
+                .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(self.titleTop)
+                    .addComponent(self.infoTop)
+                    # titles
+                    .addGroup(layout.createSequentialGroup()
+                        # title left
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(self.addTitle))
+                            .addGap(168)
+                        # title right
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(self.resultTitle)))
+
+                    .addGroup(layout.createSequentialGroup()
+                        # top left
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(self.validUsername)
+                            .addComponent(self.invalidUsername)
+                            .addComponent(self.parameter)
+                            .addComponent(self.average)
+                            .addComponent(self.addTitleFile)
+                            .addComponent(self.inputFileButton)
+                            .addComponent(self.separatorList)
+                            .addComponent(self.parameterList)
+                            .addComponent(self.averageList))
+                            .addGap(12)
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(self.addValid, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.addInvalid, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.addParameter, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.addAverage, swing.GroupLayout.PREFERRED_SIZE, 80, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.submitButton1)
+                            .addComponent(self.addSeparatorList, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.addParameterList, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.addAverageList, swing.GroupLayout.PREFERRED_SIZE, 80, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.submitButton2))
+                        .addGap(50)
+                        # top right
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(self.showResults, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.twoUserViewReq)
+                            .addComponent(self.resultTitleList)
+                            .addComponent(self.showResultsList, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(self.downloadResultList)
+                            .addComponent(self.listViewReq))))))
+
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+            # whole layout
+            .addGroup(layout.createSequentialGroup()
+                .addGap(15)
+                .addComponent(self.titleTop)
+                .addGap(10)
+                .addComponent(self.infoTop)
+                .addGap(10)
+                # titles
+                .addGroup(layout.createSequentialGroup()
+                    # left
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(self.addTitle)
+                        .addGap(25)
+                    # right
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(self.resultTitle))))
+                # top half
+                .addGroup(layout.createSequentialGroup()
+                    # left
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.validUsername)
+                                .addGap(5)
+                                .addComponent(self.addValid, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(5)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.invalidUsername)
+                                .addGap(5)
+                                .addComponent(self.addInvalid, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(5)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.parameter)
+                                .addGap(5)
+                                .addComponent(self.addParameter, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(5)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.average)
+                                .addGap(5)
+                                .addComponent(self.addAverage, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(5)
+                    # right
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(self.showResults, swing.GroupLayout.PREFERRED_SIZE, 120, swing.GroupLayout.PREFERRED_SIZE))))
+                # buttons + titles
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(self.submitButton1)
+                        .addGap(10)
+                        .addComponent(self.twoUserViewReq))
+                        .addGap(10)
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(self.addTitleFile)
+                        .addGap(25)
+                        .addComponent(self.resultTitleList)))
+                        .addGap(3)
+                # bottom half
+                .addGroup(layout.createSequentialGroup()
+                    # left
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.inputFileButton))
+                                .addGap(10)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.separatorList)
+                                .addGap(5)
+                                .addComponent(self.addSeparatorList, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(5)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.parameterList)
+                                .addGap(5)
+                                .addComponent(self.addParameterList, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(5)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.averageList)
+                                .addGap(5)
+                                .addComponent(self.addAverageList, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(5)
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.showResultsList, swing.GroupLayout.PREFERRED_SIZE, 120, swing.GroupLayout.PREFERRED_SIZE))))
+                # buttons
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(self.submitButton2)
+                        .addGap(10)
+                        .addComponent(self.downloadResultList)
+                        .addGap(10)
+                        .addComponent(self.listViewReq))
+                        .addGap(10))))
+
+
         """ Create GUI for this tabbed pane """
         # create main panel to the whole layout
+        """
         self.firstTab = JPanel()
         self.firstTab.layout = BorderLayout()
 
         # create a big box to organize the layout inside of it
         pagebox = Box.createVerticalBox()
+
+        # create a box for the title of the layout
+        toptitle = Box.createHorizontalBox()
+        pagebox.add(toptitle)
+        title = self.createTopTitle()
+        toptitle.add(title)
 
         # create a box for top-half area and add to the page
         tophalf = Box.createHorizontalBox()
@@ -69,11 +318,9 @@ class tab():
         tophalf.add(topleft)
         tophalf.add(topright)
 
-
         # draw a horizontal line right after top-half box
         sep = JSeparator()
         pagebox.add(sep)
-
 
         # create a box for bottom-half area and add to the page
         bottomhalf = Box.createHorizontalBox()
@@ -85,7 +332,6 @@ class tab():
         # add bottom-left and bottom-right boxes to bottom-half
         bottomhalf.add(bottomleft)
         bottomhalf.add(bottomright)
-
 
         # draw a horizontal line after bottom-half box
         sep = JSeparator()
@@ -104,8 +350,17 @@ class tab():
         return self.firstTab
 
 
+    def createTopTitle(self):
+        toptitle = self.getBorderVertBox()
+        title = JPanel()
+        self.addTitle("Timing Attack", title)
+        toptitle.add(title)
+        toptitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return toptitle
+
+
     def createTopLeftBox(self):
-        """ Method to create the top left box """
+        # Method to create the top left box
         topleft = self.getBorderVertBox()
 
         # title for the top-left area
@@ -178,7 +433,7 @@ class tab():
 
 
     def createTopRightBox(self):
-        """ Method to create the top right box """
+        # Method to create the top right box
         topright = self.getBorderVertBox()
 
         # title for the top-right area
@@ -203,7 +458,7 @@ class tab():
 
 
     def createBottomLeftBox(self):
-        """ Method to create the bottom left box """
+        # Method to create the bottom left box
         bottomleft = self.getBorderVertBox()
         # title for the bottom-left area
         self.addTitle("Input Username File", bottomleft)
@@ -255,7 +510,7 @@ class tab():
 
 
     def createBottomRightBox(self):
-        """ Method to create the bottom right box """
+        # Method to create the bottom right box
         bottomright = self.getBorderVertBox()
 
         # title for the bottom-right area
@@ -299,7 +554,7 @@ class tab():
 
 
     def createDebugBox(self):
-        """ Method to create the debug box """
+        # Method to create the debug box
         debugbox = self.getBorderVertBox()
         horizontaldebug = Box.createHorizontalBox()
 
@@ -324,38 +579,37 @@ class tab():
 
 
     def getBorderVertBox(self):
-        """ Method that creates box with a border (padding)
-        to put other JComponents in """
+        # Method that creates box with a border (padding)
+        to put other JComponents in
         boxVert = Box.createVerticalBox()
         bord = EmptyBorder(10, 10, 10, 10)
         boxVert.setBorder(bord)
         return boxVert
 
-
     def addLabel(self, text, box):
-        """ Method that creates a label and adds it to a box """
+        # Method that creates a label and adds it to a box
         labelArea = JLabel(text)
         box.add(labelArea)
-        labelArea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        labelArea.setAlignmentX(Component.LEFT_ALIGNMENT)
         return
 
 
     def addTitle(self, text, box):
-        """ Method that adds titles for boxes """
+        # Method that adds titles for boxes
         # Create orange color variable
         orange = Color(16737843)
         # Create font for titles
         titlefont = Font("Tahoma", 1, 14)
         # Create title
         labelArea = JLabel(text)
-        labelArea.setForeground(orange);
-        labelArea.setFont(titlefont);
+        labelArea.setForeground(orange)
+        labelArea.setFont(titlefont)
         box.add(labelArea)
         return
-
+"""
 
     def chooseFile(self, event):
-        """ Method that allows the user to choose a file of usernames """
+        # Method that allows the user to choose a file of usernames
         # try to load the last used directory
         try:
             # load the directory for future imports/exports
@@ -366,12 +620,12 @@ class tab():
             # set the last used directory to blank
             fileChooserDirectory = ""
 
-        self.chooser = JFileChooser(fileChooserDirectory)
+        self.chooser = swing.JFileChooser(fileChooserDirectory)
         fileextensions = ["txt"]
         filter = FileNameExtensionFilter("TXT FILES", fileextensions)
         self.chooser.setFileFilter(filter)
         returnVal = self.chooser.showOpenDialog(self.chooser)
-        if(returnVal == JFileChooser.APPROVE_OPTION):
+        if(returnVal == swing.JFileChooser.APPROVE_OPTION):
             self.inputFile.text = self.chooser.getSelectedFile().getName()
 
 
@@ -381,21 +635,21 @@ class tab():
 
 
     def timeTwoUsers(self, event):
-        """ Method that sends the current request to getTwoUserTimes """
+        # Method that sends the current request to getTwoUserTimes
         if (self.curRequest == None):
             self.debugOutput("Timing Attack does not have a request")
             return
         # change button to say show request
         self.showRequestTopIsOn = False
-        self.twoUserViewReq.setText("View the request")
+        self.twoUserViewReq.setText("View the Request")
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
 
     def getTwoUserTimes(self):
-        """ Method that prints the time taken to return responses
-        from one valid username and from one invalid username (called
-        by timeTwoUsers) """
+        # Method that prints the time taken to return responses
+        # from one valid username and from one invalid username (called
+        # by timeTwoUsers)
         self.twoUserViewReq.setVisible(True)
         self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
         self.getResults.text += str(self.getTime(self.parameterName.text, self.validUser.text, self.numTries.text)) + "\n"
@@ -404,8 +658,8 @@ class tab():
 
 
     def timeUserList(self, event):
-        """ Method that reads the usernames from file and sends
-        them to getUserListTimes """
+        #Method that reads the usernames from file and sends
+        # them to getUserListTimes
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
             self.debugOutput("Timing Attack does not have a request")
@@ -426,7 +680,7 @@ class tab():
 
             # change button to say show request
             self.showListRequestIsOn = False
-            self.listViewReq.setText("View the request")
+            self.listViewReq.setText("View the Request")
             # gets the time for each username
             threading.Thread(target=self.getUserListTimes).start()
         # it will handle the error and send a message about it
@@ -437,8 +691,8 @@ class tab():
 
 
     def getUserListTimes(self):
-        """ Method that prints the time taken to return responses
-        for each username from file (called by timeUserList) """
+        # Method that prints the time taken to return responses
+        # for each username from file (called by timeUserList)
         self.listViewReq.setVisible(True)
         self.getListResults.text = ""
         for i in self.userList:
@@ -448,8 +702,8 @@ class tab():
 
 
     def getTime(self, paramName, paramInput, numTriesText):
-        """ Method that takes in a username and returns time taken to get
-        its response (called by getTwoUserTimes and getUserListTimes)"""
+        # Method that takes in a username and returns time taken to get
+        # its response (called by getTwoUserTimes and getUserListTimes)
         numTries = int(numTriesText)
         # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
@@ -490,7 +744,7 @@ class tab():
 
 
     def showRequestTop(self, event):
-        """ Method that shows the request for top box """
+        # Method that shows the request for top box
         if (not self.showRequestTopIsOn):
             self.twoUserResultOutput = self.getResults.text
         self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
@@ -499,7 +753,7 @@ class tab():
 
 
     def showListRequest(self, event):
-        """ Method that shows the request from a file of usernames """
+        # Method that shows the request from a file of usernames
         if (not self.showListRequestIsOn):
             self.listResultOutput = self.getListResults.text
         self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
@@ -508,7 +762,7 @@ class tab():
 
 
     def showRequest(self, box, button, output, bool):
-        """ Switch from view request to view result and vice versa """
+        # Switch from view request to view result and vice versa
         if (bool):
             if not output:
                 return
@@ -529,8 +783,8 @@ class tab():
 
 
     def downloadResults(self, event):
-        """ Method that allows user to download file of times for responses
-        for usernames from list """
+        # Method that allows user to download file of times for responses
+        # for usernames from list
         if (self.getListResults.text == ""):
             return
         file = open(get_download_path() + "/downloadresults.txt", "w")
@@ -539,7 +793,7 @@ class tab():
 
 
     def get_download_path():
-        """ Method to find path of download folder (called by downloadResults) """
+        # Method to find path of download folder (called by downloadResults)
         # returns the default downloads path for linux or windows
         if os.name == 'nt':
             import winreg
@@ -558,7 +812,7 @@ class tab():
 
 
     def debugOutput(self, message):
-        """ Write a debug message in the debug box """
+        # Write a debug message in the debug box
         self.debugText.text = message
         self.debugText.setVisible(True)
         self.viewDebug.setText("Close debug output")
@@ -566,7 +820,7 @@ class tab():
 
 
     def showDebug(self, event):
-        """ Open or close debug box """
+        # Open or close debug box
         if self.debugOn:
             self.debugText.setVisible(False)
             self.viewDebug.setText("View debug output")
@@ -584,7 +838,7 @@ class tab():
 
 
     def getRequest(self, messageList):
-        """ Method that stores the request sent from proxy """
+        # Method that stores the request sent from proxy
         self.curRequest = messageList[0]
         # Make sure show request tabs start out empty
         self.showRequestTopIsOn = False
