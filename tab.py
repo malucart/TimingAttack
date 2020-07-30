@@ -696,7 +696,6 @@ class tab():
         try:
             # stores the file
             file = self.chooser.getSelectedFile()
-            self.addParameterList.text = ""
 
             # reads it
             scan = Scanner(file)
