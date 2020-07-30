@@ -1,11 +1,11 @@
 """
 Name:           Timing Attack
-Date:           7/29/2020
+Date:           7/30/2020
 Author:         inbarmada & louisa
 Description:    TimingAttack is open source plugin to help pentesters for guessing if a username is valid or not by how long
                 the system takes to respond to an fail authentication. And then, comparing that to how long the system takes
-                to respond for a valid login. It means that if attackers can guess one valid username, then they can guess
-                much more using the same technique. Best part of it, it is totally automated by the attacker.
+                to respond for a valid one. It means that if attackers can guess one valid username, then they can guess
+                much more using the same technique.
 Copyright (c) 2020, louisa & inbarmada
 All rights reserved.
 Please see the attached LICENSE file for additional licensing information.
@@ -15,7 +15,7 @@ from burp import IBurpExtender # for the extension
 from burp import ITab # for creating an extension tab
 from burp import IExtensionHelpers # for helper methods
 from burp import IContextMenuFactory # for adding an option to the right click popup menu
-from burp import IBurpExtenderCallbacks
+from javax import swing # mainly library for UI
 from javax.swing import JPanel # for panels
 from javax.swing import Box # for arranging components either in a row or in a column
 from javax.swing import JTextField # for inputting text value in a single line format
@@ -25,10 +25,7 @@ from javax.swing import JSeparator # for implementing divider lines
 from javax.swing import JScrollPane # for scroll panes to help with extended text areas
 from javax.swing import JLabel # for labels
 from javax.swing import JFileChooser # for importing and exporting file chooser
-from javax.swing import BoxLayout;
-from javax.swing import JDialog
-from javax.swing import GroupLayout
-from javax import swing
+from javax.swing import GroupLayout # for adding all groups
 from javax.swing.filechooser import FileNameExtensionFilter # for importing and exporting
 from javax.swing.border import EmptyBorder # for an empty/transparent border
 from java.awt import BorderLayout # for panel layouts
@@ -69,18 +66,22 @@ class tab():
 
     def createTabGUI(self):
 
+        # panel for the whole tab
         self.firstTab = JPanel()
+
+        # name of the extention
         self.titleTop = JLabel("Timing Attack")
         self.titleTop.setFont(Font("Tahoma", 1, 14))
         self.titleTop.setForeground(Color(255,102,51))
 
+        # info about the extention
         self.infoTop = JLabel("Timing Attack is a open source extention to inform how long the system takes to respond for a valid and an invalid authentication.")
         self.infoTop.setFont(Font("Tahoma", 0, 11))
 
+        # labels and inputs on top half
         self.addTitle = JLabel("Enter a Valid and an Invalid Username")
         self.addTitle.setFont(Font("Tahoma", 1, 13))
         self.addTitle.setForeground(Color(255,102,51))
-
         self.validUsername = swing.JLabel("Valid Username")
         self.validUsername.setFont(Font("Tahoma", 0, 12))
         self.invalidUsername = swing.JLabel("Invalid Username")
@@ -89,67 +90,67 @@ class tab():
         self.parameter.setFont(Font("Tahoma", 0, 12))
         self.average = swing.JLabel("Quantity to Get Average Time")
         self.average.setFont(Font("Tahoma", 0, 12))
-
         self.addValid = swing.JTextField("")
         self.addInvalid = swing.JTextField("")
         self.addParameter = swing.JTextField("")
         self.addAverage = swing.JTextField("")
-
         self.submitButton1 = swing.JButton("Submit", actionPerformed=self.timeTwoUsers)
 
+        # result on top left
         self.resultTitle = swing.JLabel("Result")
         self.resultTitle.setFont(Font("Tahoma", 1, 13))
         self.resultTitle.setForeground(Color(255,102,51))
         self.showResults = swing.JTextArea("")
         self.showResults.setEditable(False)
-
+        showResultsScroll = swing.JScrollPane(self.showResults)
         self.showRequestTopIsOn = False
         self.twoUserResultOutput = ""
         self.twoUserViewReq = swing.JButton("View the Request", actionPerformed=self.showRequestTop)
 
+        # separator
         self.bar = swing.JSeparator(swing.SwingConstants.HORIZONTAL)
 
+        # labels, inputs and file on bottom half
         self.addTitleFile = swing.JLabel("Input Username File")
         self.addTitleFile.setFont(Font("Tahoma", 1, 13))
         self.addTitleFile.setForeground(Color(255,102,51))
-
         self.inputFileButton = swing.JButton("Choose File...", actionPerformed=self.chooseFile)
-
-        self.resultTitleList = swing.JLabel("Result")
-        self.resultTitleList.setFont(Font("Tahoma", 1, 13))
-        self.resultTitleList.setForeground(Color(255,102,51))
-        self.showResultsList = swing.JTextArea("")
-        self.showResultsList.setEditable(False)
-        showResultsListScroll = swing.JScrollPane(self.showResultsList)
-
         self.separatorList = swing.JLabel("Separator")
         self.separatorList.setFont(Font("Tahoma", 0, 12))
         self.parameterList = swing.JLabel("Parameter")
         self.parameterList.setFont(Font("Tahoma", 0, 12))
         self.averageList = swing.JLabel("Quantity to Get Average Time")
         self.averageList.setFont(Font("Tahoma", 0, 12))
-
         self.addSeparatorList = swing.JTextField("")
         self.addParameterList = swing.JTextField("")
         self.addAverageList = swing.JTextField("")
-
         self.submitButton2 = swing.JButton("Submit", actionPerformed=self.timeUserList)
-        self.downloadResultList = JButton("Download Results", actionPerformed=self.downloadResults)
 
+        # result on bottom left
+        self.resultTitleList = swing.JLabel("Result")
+        self.resultTitleList.setFont(Font("Tahoma", 1, 13))
+        self.resultTitleList.setForeground(Color(255,102,51))
+        self.showResultsList = swing.JTextArea("")
+        self.showResultsList.setEditable(False)
+        showResultsListScroll = swing.JScrollPane(self.showResultsList)
+        self.downloadResultList = JButton("Download Results", actionPerformed=self.downloadResults)
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewReq = swing.JButton("View the Request", actionPerformed=self.showListRequest)
 
+        # separator
+        self.bar2 = swing.JSeparator(swing.SwingConstants.HORIZONTAL)
 
+        # something wrong?
         self.somethingWrong = swing.JLabel("Something Wrong?")
         self.debugOn = False
         self.viewDebug = JButton("View debug output", actionPerformed=self.showDebug)
         self.debugText = swing.JTextArea("")
         self.debugText.setVisible(False)
 
+        # layout
         layout = swing.GroupLayout(self.firstTab)
         self.firstTab.setLayout(layout)
-
 
 
         layout.setHorizontalGroup(
@@ -172,7 +173,7 @@ class tab():
                             .addComponent(self.resultTitle)))
 
                     .addGroup(layout.createSequentialGroup()
-                        # top left
+                        # left
                         .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                             .addComponent(self.validUsername)
                             .addComponent(self.invalidUsername)
@@ -197,13 +198,12 @@ class tab():
                             .addComponent(self.submitButton2)
                             .addComponent(self.viewDebug))
                         .addGap(50)
-                        # top right
+                        # right
                         .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(self.showResults, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(showResultsScroll, swing.GroupLayout.PREFERRED_SIZE, 600, swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(self.twoUserViewReq)
                             .addComponent(self.resultTitleList)
-                            .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE)
-                            # buttons right
+                            .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 600, swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(self.downloadResultList))
@@ -234,7 +234,7 @@ class tab():
                         .addComponent(self.resultTitle))))
                 # top half
                 .addGroup(layout.createSequentialGroup()
-                    # left
+                    # left top half
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
@@ -255,19 +255,20 @@ class tab():
                             .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(self.average)
                                 .addGap(5)
-                                .addComponent(self.addAverage, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(self.addAverage, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
                             .addGap(5)
-                    # right
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.submitButton1)))
+                            .addGap(5)
+                    # right top half
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(self.showResults, swing.GroupLayout.PREFERRED_SIZE, 120, swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(showResultsScroll, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(5)
                 # buttons + titles
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(self.submitButton1)
-                        .addGap(10)
                         .addComponent(self.twoUserViewReq))
-                        .addGap(10)
+                        .addGap(20)
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(self.addTitleFile)
                         .addGap(25)
@@ -275,7 +276,7 @@ class tab():
                         .addGap(3)
                 # bottom half
                 .addGroup(layout.createSequentialGroup()
-                    # left
+                    # left bottom half
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
@@ -294,29 +295,30 @@ class tab():
                             .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(self.averageList)
                                 .addGap(5)
-                                .addComponent(self.addAverageList, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(self.addAverageList, swing.GroupLayout.PREFERRED_SIZE, swing.GroupLayout.DEFAULT_SIZE, swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(5)
+                            .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(self.submitButton2)))
                                 .addGap(5)
                         .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 122, swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(5)
-                # buttons
-                .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(self.submitButton2)
-                        .addGap(10)
-                        .addComponent(self.downloadResultList)
-                        .addGap(10)
-                        .addComponent(self.listViewReq)))
-                .addGap(30)
+                                .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 200, swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGap(5)
+                    # right bottom half
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(self.downloadResultList)
+                            .addGap(10)
+                            .addComponent(self.listViewReq)))
+                    .addGap(30)
+                # something wrong section
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(self.somethingWrong)
                         .addGap(10)
-                        .addComponent(self.debugText)
-                        .addGap(10)
                         .addComponent(self.viewDebug)
                         .addGap(10)
                         .addComponent(self.debugText, swing.GroupLayout.PREFERRED_SIZE, 122, swing.GroupLayout.PREFERRED_SIZE)))))
+        return
 
 
         """ Create GUI for this tabbed pane """
@@ -678,10 +680,10 @@ class tab():
         # from one valid username and from one invalid username (called
         # by timeTwoUsers)
         self.twoUserViewReq.setVisible(True)
-        self.getResults.text = "Valid username: " + self.validUser.text + " Time: "
-        self.getResults.text += str(self.getTime(self.parameterName.text, self.validUser.text, self.numTries.text)) + "\n"
-        self.getResults.text += "Invalid username: " + self.invalidUser.text + " Time: "
-        self.getResults.text += str(self.getTime(self.parameterName.text, self.invalidUser.text, self.numTries.text))
+        self.showResults.text = "Valid username: " + self.validUsername.text + "; Time: "
+        self.showResults.text += str(self.getTime(self.parameter.text, self.validUsername.text, self.average.text)) + "\n"
+        self.showResults.text += "Invalid username: " + self.invalidUsername.text + "; Time: "
+        self.showResults.text += str(self.getTime(self.parameter.text, self.invalidUsername.text, self.average.text))
 
 
     def timeUserList(self, event):
@@ -694,7 +696,7 @@ class tab():
         try:
             # stores the file
             file = self.chooser.getSelectedFile()
-            self.fileSubmitError.text = ""
+            self.parameterList.text = ""
 
             # reads it
             scan = Scanner(file)
@@ -703,7 +705,7 @@ class tab():
                 readFile += scan.nextLine()
 
             # divides the file to a list of usernames
-            self.userList = readFile.split(self.paramSeparator.text)
+            self.userList = readFile.split(self.separatorList.text)
 
             # change button to say show request
             self.showListRequestIsOn = False
@@ -721,10 +723,10 @@ class tab():
         # Method that prints the time taken to return responses
         # for each username from file (called by timeUserList)
         self.listViewReq.setVisible(True)
-        self.getListResults.text = ""
+        self.showResultsList.text = ""
         for i in self.userList:
-            self.getListResults.text += "Username: " + i + " Time: "
-            self.getListResults.text += str(self.getTime(self.fileParameterName.text, i, self.listNumTries.text)) + "\n"
+            self.showResultsList.text += "Username: " + i + " Time: "
+            self.showResultsList.text += str(self.getTime(self.parameterList.text, i, self.averageList.text)) + "\n"
         return
 
 
@@ -773,8 +775,8 @@ class tab():
     def showRequestTop(self, event):
         # Method that shows the request for top box
         if (not self.showRequestTopIsOn):
-            self.twoUserResultOutput = self.getResults.text
-        self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
+            self.twoUserResultOutput = self.showResults.text
+        self.showRequest(self.showResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
         if self.twoUserResultOutput:
             self.showRequestTopIsOn = not self.showRequestTopIsOn
 
@@ -782,8 +784,8 @@ class tab():
     def showListRequest(self, event):
         # Method that shows the request from a file of usernames
         if (not self.showListRequestIsOn):
-            self.listResultOutput = self.getListResults.text
-        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
+            self.listResultOutput = self.showResultsList.text
+        self.showRequest(self.showResultsList, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
         if self.listResultOutput:
             self.showListRequestIsOn = not self.showListRequestIsOn
 
@@ -812,10 +814,10 @@ class tab():
     def downloadResults(self, event):
         # Method that allows user to download file of times for responses
         # for usernames from list
-        if (self.getListResults.text == ""):
+        if (self.showResultsList.text == ""):
             return
         file = open(get_download_path() + "/downloadresults.txt", "w")
-        file.write(self.getListResults.text)
+        file.write(self.showResultsList.text)
         file.close()
 
 
@@ -870,11 +872,11 @@ class tab():
         # Make sure show request tabs start out empty
         self.showRequestTopIsOn = False
         self.showListRequestIsOn = False
-        self.twoUserResultOutput = self.getResults.text
-        self.listResultOutput = self.getListResults.text
+        self.twoUserResultOutput = self.showResults.text
+        self.listResultOutput = self.showResultsList.text
         # Show request in both top and bottom windows
-        self.showRequest(self.getResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
-        self.showRequest(self.getListResults, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
+        self.showRequest(self.showResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
+        self.showRequest(self.showResultsList, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
         self.showRequestTopIsOn = True
         self.showListRequestIsOn = True
         self.twoUserViewReq.setVisible(False)
