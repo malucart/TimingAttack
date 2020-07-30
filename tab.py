@@ -680,10 +680,10 @@ class tab():
         # from one valid username and from one invalid username (called
         # by timeTwoUsers)
         self.twoUserViewReq.setVisible(True)
-        self.showResults.text = "Valid username: " + self.validUsername.text + "; Time: "
-        self.showResults.text += str(self.getTime(self.parameter.text, self.validUsername.text, self.average.text)) + "\n"
-        self.showResults.text += "Invalid username: " + self.invalidUsername.text + "; Time: "
-        self.showResults.text += str(self.getTime(self.parameter.text, self.invalidUsername.text, self.average.text))
+        self.showResults.text = "Valid username: " + self.addValid.text + "; Time: "
+        self.showResults.text += str(self.getTime(self.parameter.text, self.addValid.text, self.addAverage.text)) + "\n"
+        self.showResults.text += "Invalid username: " + self.addInvalid.text + "; Time: "
+        self.showResults.text += str(self.getTime(self.parameter.text, self.addInvalid.text, self.addAverage.text))
 
 
     def timeUserList(self, event):
@@ -696,7 +696,7 @@ class tab():
         try:
             # stores the file
             file = self.chooser.getSelectedFile()
-            self.parameterList.text = ""
+            self.addParameterList.text = ""
 
             # reads it
             scan = Scanner(file)
@@ -705,7 +705,7 @@ class tab():
                 readFile += scan.nextLine()
 
             # divides the file to a list of usernames
-            self.userList = readFile.split(self.separatorList.text)
+            self.userList = readFile.split(self.addSeparatorList.text)
 
             # change button to say show request
             self.showListRequestIsOn = False
@@ -726,7 +726,7 @@ class tab():
         self.showResultsList.text = ""
         for i in self.userList:
             self.showResultsList.text += "Username: " + i + " Time: "
-            self.showResultsList.text += str(self.getTime(self.parameterList.text, i, self.averageList.text)) + "\n"
+            self.showResultsList.text += str(self.getTime(self.addParameterList.text, i, self.addAverageList.text)) + "\n"
         return
 
 
