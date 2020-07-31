@@ -107,10 +107,16 @@ class tab():
         self.showResults = swing.JTextArea("")
         self.showResults.setEditable(False)
         showResultsScroll = swing.JScrollPane(self.showResults)
-        self.showRequestTopIsOn = False
         self.twoUserResultOutput = ""
+        self.twoUserViewResult = swing.JButton("View Results", actionPerformed=self.showResultsTop)
         self.twoUserViewReq = swing.JButton("View the Request", actionPerformed=self.showRequestTop)
-        self.twoUserViewResponse = swing.JButton("View the Response", actionPerformed=self.showResponseTop)
+        self.twoUserViewValidResponse = swing.JButton("View Valid Response", actionPerformed=self.showValidResponseTop)
+        self.twoUserViewInvalidResponse = swing.JButton("View Invalid Response", actionPerformed=self.showInvalidResponseTop)
+        # Set top buttons to invisible until a request is submitted
+        self.twoUserViewResult.setVisible(False)
+        self.twoUserViewReq.setVisible(False)
+        self.twoUserViewValidResponse.setVisible(False)
+        self.twoUserViewInvalidResponse.setVisible(False)
 
         # separator
         self.bar = swing.JSeparator(swing.SwingConstants.HORIZONTAL)
@@ -209,10 +215,16 @@ class tab():
                             .addComponent(showResultsScroll, swing.GroupLayout.PREFERRED_SIZE, 600, swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(self.twoUserViewResult))
+                                .addGap(15)
+                                .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(self.twoUserViewReq))
                                 .addGap(15)
                                 .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(self.twoUserViewResponse)))
+                                    .addComponent(self.twoUserViewValidResponse))
+                                    .addGap(15)
+                                .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(self.twoUserViewInvalidResponse)))
                             .addComponent(self.resultTitleList)
                             .addComponent(showResultsListScroll, swing.GroupLayout.PREFERRED_SIZE, 600, swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
@@ -278,9 +290,13 @@ class tab():
                 # buttons + titles
                 .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(self.twoUserViewResult)
+                        .addGap(20)
                         .addComponent(self.twoUserViewReq)
                         .addGap(20)
-                        .addComponent(self.twoUserViewResponse))
+                        .addComponent(self.twoUserViewValidResponse)
+                        .addGap(20)
+                        .addComponent(self.twoUserViewInvalidResponse))
                     .addGap(10)
                     .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(self.addTitleFile)
@@ -366,8 +382,10 @@ class tab():
             self.debugOutput("Timing Attack does not have a request")
             return
         # change button to say show request
-        self.showRequestTopIsOn = False
-        self.twoUserViewReq.setText("View the Request")
+        self.twoUserViewResult.setVisible(True)
+        self.twoUserViewReq.setVisible(True)
+        self.twoUserViewValidResponse.setVisible(True)
+        self.twoUserViewInvalidResponse.setVisible(True)
         threading.Thread(target=self.getTwoUserTimes).start()
         return
 
@@ -377,10 +395,13 @@ class tab():
         # from one valid username and from one invalid username (called
         # by timeTwoUsers)
         self.twoUserViewReq.setVisible(True)
-        self.showResults.text = "Valid username: " + self.addValid.text + "; Time: "
-        self.showResults.text += str(self.getTime(self.addParameter.text, self.addValid.text, self.addAverage.text)) + "\n"
-        self.showResults.text += "Invalid username: " + self.addInvalid.text + "; Time: "
-        self.showResults.text += str(self.getTime(self.addParameter.text, self.addInvalid.text, self.addAverage.text))
+        validTime, self.validResponse = self.getTime(self.addParameter.text, self.addValid.text, self.addAverage.text)
+        invalidTime, self.invalidResponse = self.getTime(self.addParameter.text, self.addInvalid.text, self.addAverage.text)
+        self.showResults.text = "Valid username: " + self.addValid.text + "\t Time: "
+        self.showResults.text += str(validTime) + "\n"
+        self.showResults.text += "Invalid username: " + self.addInvalid.text + "\t Time: "
+        self.showResults.text += str(invalidTime)
+        self.twoUserResult = self.showResults.text
 
 
     def timeUserList(self, event):
@@ -461,8 +482,9 @@ class tab():
             makeRequest.getResponse()
             getTime += time.clock() - start
 
+        response = self.callbacks.makeHttpRequest(httpService, newRequest).getResponse()
         # return the response
-        return getTime / numTries
+        return getTime / numTries, response
 
 
     ###################################
@@ -472,11 +494,8 @@ class tab():
 
     def showRequestTop(self, event):
         # Method that shows the request for top box
-        if (not self.showRequestTopIsOn):
-            self.twoUserResultOutput = self.showResults.text
-        self.showRequest(self.showResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
-        if self.twoUserResultOutput:
-            self.showRequestTopIsOn = not self.showRequestTopIsOn
+        helpers = self.callbacks.getHelpers()
+        self.showResults.text = helpers.bytesToString(self.curRequest.getRequest())
 
 
     def showListRequest(self, event):
@@ -503,8 +522,18 @@ class tab():
             box.text = helpers.bytesToString(self.curRequest.getRequest())
             button.setText("View Results")
 
-    def showResponseTop(self):
-        self.debugOutput("Show respone")
+    def showResultsTop(self, event):
+        self.showResults.text = self.twoUserResult
+
+    def showValidResponseTop(self, event):
+        helpers = self.callbacks.getHelpers()
+        self.showResults.text = helpers.bytesToString(self.validResponse)
+
+    def showInvalidResponseTop(self, event):
+        helpers = self.callbacks.getHelpers()
+        self.showResults.text = helpers.bytesToString(self.invalidResponse)
+
+
     ###############################
     # SECTION 4: DOWNLOAD BUTTONS #
     ###############################
@@ -572,14 +601,12 @@ class tab():
         # Method that stores the request sent from proxy
         self.curRequest = messageList[0]
         # Make sure show request tabs start out empty
-        self.showRequestTopIsOn = False
         self.showListRequestIsOn = False
-        self.twoUserResultOutput = self.showResults.text
         self.listResultOutput = self.showResultsList.text
         # Show request in both top and bottom windows
-        self.showRequest(self.showResults, self.twoUserViewReq, self.twoUserResultOutput, self.showRequestTopIsOn)
         self.showRequest(self.showResultsList, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
-        self.showRequestTopIsOn = True
         self.showListRequestIsOn = True
-        self.twoUserViewReq.setVisible(False)
         self.listViewReq.setVisible(False)
+        # Show request in top box
+        helpers = self.callbacks.getHelpers()
+        self.showResults.text = helpers.bytesToString(self.curRequest.getRequest())
