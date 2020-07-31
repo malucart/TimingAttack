@@ -110,6 +110,7 @@ class tab():
         self.showRequestTopIsOn = False
         self.twoUserResultOutput = ""
         self.twoUserViewReq = swing.JButton("View the Request", actionPerformed=self.showRequestTop)
+        self.twoUserViewResponse = swing.JButton("View the Response", actionPerformed=self.showResponseTop)
 
         # separator
         self.bar = swing.JSeparator(swing.SwingConstants.HORIZONTAL)
@@ -495,7 +496,8 @@ class tab():
             box.text = helpers.bytesToString(self.curRequest.getRequest())
             button.setText("View Results")
 
-
+    def showResponseTop(self):
+        self.debugOutput("Show respone")
     ###############################
     # SECTION 4: DOWNLOAD BUTTONS #
     ###############################
