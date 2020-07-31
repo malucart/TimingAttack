@@ -106,7 +106,6 @@ class tab():
         self.showResults = JTextArea("")
         self.showResults.setEditable(False)
         self.showResultsScroll = JScrollPane(self.showResults)
-        self.twoUserResultOutput = ""
         self.twoUserViewResult = JButton("View Results", actionPerformed=self.showResultsTop)
         self.twoUserViewReq = JButton("View Request", actionPerformed=self.showRequestTop)
         self.twoUserViewValidResponse = JButton("View Valid Response", actionPerformed=self.showValidResponseTop)
@@ -142,8 +141,6 @@ class tab():
         self.showResultsList.setEditable(False)
         self.showResultsListScroll = JScrollPane(self.showResultsList)
         self.downloadResultList = JButton("Download Display", actionPerformed=self.downloadResults)
-        self.showListRequestIsOn = False
-        self.listResultOutput = ""
         self.listViewResults = JButton("View Results", actionPerformed=self.showListResults)
         self.listViewReq = JButton("View Request", actionPerformed=self.showListRequest)
         self.listViewResponses = JButton("View Responses", actionPerformed=self.showListResponses)
@@ -505,9 +502,9 @@ class tab():
         return getTime / numTries, response
 
 
-    ###################################
-    # SECTION 3: VIEW REQUEST BUTTONS #
-    ###################################
+    ####################################################
+    # SECTION 3: VIEW REQUEST/RESPONSE/RESULTS BUTTONS #
+    ####################################################
 
 
     def showListRequest(self, event):
@@ -522,22 +519,6 @@ class tab():
     def showListResponses(self, event):
         """ Show responses for list """
         self.showResultsList.text = self.listResponses
-
-    def showRequest(self, box, button, output, bool):
-        """ Switch from view request to view result and vice versa """
-
-        if (bool):
-            if not output:
-                return
-            else:
-                box.text = output
-                button.setText("View the Request")
-
-        else:
-            helpers = self.callbacks.getHelpers()
-            output = box.text
-            box.text = helpers.bytesToString(self.curRequest.getRequest())
-            button.setText("View Results")
 
     def showResultsTop(self, event):
         """ Show results on top """
@@ -559,9 +540,9 @@ class tab():
         self.showResults.text = helpers.bytesToString(self.invalidResponse)
 
 
-    ###############################
-    # SECTION 4: DOWNLOAD BUTTONS #
-    ###############################
+    ##############################
+    # SECTION 4: DOWNLOAD BUTTON #
+    ##############################
 
 
     def downloadResults(self, event):
@@ -630,10 +611,6 @@ class tab():
         """ Method that stores the request sent from proxy """
 
         self.curRequest = messageList[0]
-
-        # Make sure show request tabs start out empty
-        self.showListRequestIsOn = False
-        self.listResultOutput = self.showResultsList.text
 
         # Show request in top box
         helpers = self.callbacks.getHelpers()
