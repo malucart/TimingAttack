@@ -108,7 +108,7 @@ class tab():
         self.showResultsScroll = JScrollPane(self.showResults)
         self.twoUserResultOutput = ""
         self.twoUserViewResult = JButton("View Results", actionPerformed=self.showResultsTop)
-        self.twoUserViewReq = JButton("View the Request", actionPerformed=self.showRequestTop)
+        self.twoUserViewReq = JButton("View Request", actionPerformed=self.showRequestTop)
         self.twoUserViewValidResponse = JButton("View Valid Response", actionPerformed=self.showValidResponseTop)
         self.twoUserViewInvalidResponse = JButton("View Invalid Response", actionPerformed=self.showInvalidResponseTop)
         # Set top buttons to invisible until a request is submitted
@@ -144,7 +144,8 @@ class tab():
         self.downloadResultList = JButton("Download Results", actionPerformed=self.downloadResults)
         self.showListRequestIsOn = False
         self.listResultOutput = ""
-        self.listViewReq = JButton("View the Request", actionPerformed=self.showListRequest)
+        self.listViewResults = JButton("View Results", actionPerformed=self.showListResults)
+        self.listViewReq = JButton("View Request", actionPerformed=self.showListRequest)
 
         # something wrong?
         self.somethingWrong = JLabel("Something Wrong?")
@@ -223,6 +224,9 @@ class tab():
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(self.downloadResultList))
+                                .addGap(15)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addComponent(self.listViewResults))
                                 .addGap(15)
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(self.listViewReq)))
@@ -328,6 +332,8 @@ class tab():
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(self.downloadResultList)
+                            .addGap(10)
+                            .addComponent(self.listViewResults)
                             .addGap(10)
                             .addComponent(self.listViewReq)))
                     .addGap(30)
@@ -440,9 +446,14 @@ class tab():
 
         self.listViewReq.setVisible(True)
         self.showResultsList.text = ""
+        self.listResponses = ""
+        helpers = self.callbacks.getHelpers()
         for i in self.userList:
-            self.showResultsList.text += "Username: " + i + " Time: "
-            self.showResultsList.text += str(self.getTime(self.addParameterList.text, i, self.addAverageList.text)) + "\n"
+            self.showResultsList.text += "Username: " + i + "\t Time: "
+            time, response = self.getTime(self.addParameterList.text, i, self.addAverageList.text)
+            self.showResultsList.text += str(time) + "\n"
+            self.listResponses += helpers.bytesToString(response) + "\n\n\n"
+        self.listResults = self.showResultsList.text
         return
 
 
@@ -498,12 +509,12 @@ class tab():
 
     def showListRequest(self, event):
         """ Method that shows the request from a file of usernames """
+        helpers = self.callbacks.getHelpers()
+        self.showResultsList.text = helpers.bytesToString(self.curRequest.getRequest())
 
-        if (not self.showListRequestIsOn):
-            self.listResultOutput = self.showResultsList.text
-        self.showRequest(self.showResultsList, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
-        if self.listResultOutput:
-            self.showListRequestIsOn = not self.showListRequestIsOn
+    def showListResults(self, event):
+        """ Show results for list """
+        self.showResultsList.text = self.listResults
 
 
     def showRequest(self, box, button, output, bool):
@@ -618,10 +629,9 @@ class tab():
         self.showListRequestIsOn = False
         self.listResultOutput = self.showResultsList.text
 
-        # Show request in both top and bottom windows
-        self.showRequest(self.showResultsList, self.listViewReq, self.listResultOutput, self.showListRequestIsOn)
-        self.showListRequestIsOn = True
-        self.listViewReq.setVisible(False)
         # Show request in top box
         helpers = self.callbacks.getHelpers()
         self.showResults.text = helpers.bytesToString(self.curRequest.getRequest())
+        # Show request in bottom box
+        helpers = self.callbacks.getHelpers()
+        self.showResultsList.text = helpers.bytesToString(self.curRequest.getRequest())
