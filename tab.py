@@ -60,7 +60,7 @@ class tab():
         Timing Attack tab """
         self.scrollPane = JScrollPane(self.firstTab,
                                       JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+                                      JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
         return self.scrollPane
 
 
