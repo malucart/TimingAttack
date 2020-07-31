@@ -150,8 +150,8 @@ class tab():
         self.debugOn = False
         self.viewDebug = JButton("View debug output", actionPerformed=self.showDebug)
         self.debugText = swing.JTextArea("")
-        self.debugText.setVisible(False)
         self.debugTextScroll = swing.JScrollPane(self.debugText)
+        self.debugTextScroll.setVisible(False)
 
         # layout
         layout = swing.GroupLayout(self.firstTab)
@@ -531,7 +531,8 @@ class tab():
     def debugOutput(self, message):
         # Write a debug message in the debug box
         self.debugText.text = message
-        self.debugText.setVisible(True)
+        # self.debugText.setVisible(True)
+        self.debugTextScroll.setVisible(True)
         self.viewDebug.setText("Close Debug Output")
         self.debugOn = True
 
@@ -539,12 +540,14 @@ class tab():
     def showDebug(self, event):
         # Open or close debug box
         if self.debugOn:
-            self.debugText.setVisible(False)
+            # self.debugText.setVisible(False)
+            self.debugTextScroll.setVisible(False)
             self.viewDebug.setText("View Debug Output")
             self.debugOn = False
             self.debugText.text = ""
         else:
-            self.debugText.setVisible(True)
+            # self.debugText.setVisible(True)
+            self.debugTextScroll.setVisible(True)
             self.viewDebug.setText("Close Debug Output")
             self.debugOn = True
 
