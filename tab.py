@@ -92,7 +92,7 @@ class tab():
         self.invalidUsername.setFont(Font("Tahoma", 0, 12))
         self.parameter = swing.JLabel("Parameter")
         self.parameter.setFont(Font("Tahoma", 0, 12))
-        self.average = swing.JLabel("Quantity to Get Average Time")
+        self.average = swing.JLabel("Sample Size")
         self.average.setFont(Font("Tahoma", 0, 12))
         self.addValid = swing.JTextField("")
         self.addInvalid = swing.JTextField("")
@@ -123,7 +123,7 @@ class tab():
         self.separatorList.setFont(Font("Tahoma", 0, 12))
         self.parameterList = swing.JLabel("Parameter")
         self.parameterList.setFont(Font("Tahoma", 0, 12))
-        self.averageList = swing.JLabel("Quantity to Get Average Time")
+        self.averageList = swing.JLabel("Sample Size")
         self.averageList.setFont(Font("Tahoma", 0, 12))
         self.addSeparatorList = swing.JTextField("")
         self.addParameterList = swing.JTextField("")
@@ -376,7 +376,7 @@ class tab():
 
 
     def timeUserList(self, event):
-        #Method that reads the usernames from file and sends
+        # Method that reads the usernames from file and sends
         # them to getUserListTimes
         # if there is no file, so the program is going to return anything
         if (self.curRequest == None):
@@ -402,7 +402,6 @@ class tab():
             threading.Thread(target=self.getUserListTimes).start()
         # it will handle the error and send a message about it
         except:
-           self.fileSubmitError.text = "No File Submitted"
            self.debugOutput("No File Submitted")
         return
 
@@ -421,7 +420,10 @@ class tab():
     def getTime(self, paramName, paramInput, numTriesText):
         # Method that takes in a username and returns time taken to get
         # its response (called by getTwoUserTimes and getUserListTimes)
-        numTries = int(numTriesText)
+        try:
+            numTries = int(numTriesText)
+        except:
+            self.debugOutput("Sample size must be an integer")
         # keeps a reference to helpers
         helpers = self.callbacks.getHelpers()
         # Get the request
