@@ -17,6 +17,7 @@ from burp import IExtensionHelpers # for helper methods
 from burp import IContextMenuFactory # for adding an option to the right click popup menu
 from javax import swing # mainly library for UI
 from javax.swing import JPanel # for panels
+from javax.swing import JScrollPane # making the tab scrollable
 from javax.swing import Box # for arranging components either in a row or in a column
 from javax.swing import JTextField # for inputting text value in a single line format
 from javax.swing import JTextArea # for multi-line text component to display text
@@ -57,7 +58,12 @@ class tab():
     def getFirstTab(self):
         """ Get the JPanel that represents the object's
         Timing Attack tab """
-        return self.firstTab
+        self.scrollPane = JScrollPane(
+                            self.firstTab,
+                            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+                            )
+        return self.scrollPane
 
 
     ###########################
