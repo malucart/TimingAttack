@@ -547,15 +547,18 @@ class tab():
 
     def downloadResults(self, event):
         """ Method that allows user to download file to get the response's time """
+        try:
+            if (self.showResultsList.text == ""):
+                return
+            file = open(self.get_download_path() + "/downloadresults.txt", "w")
+            file.write(self.showResultsList.text)
+            file.close()
+            self.debugOutput("Download successful! \nCheck your downloads folder for the file.")
+        except:
+            self.debugOutput("Download failed.")
 
-        if (self.showResultsList.text == ""):
-            return
-        file = open(get_download_path() + "/downloadresults.txt", "w")
-        file.write(self.showResultsList.text)
-        file.close()
 
-
-    def get_download_path():
+    def get_download_path(self):
         """ Method to find path of download folder (called by downloadResults),
          and it returns the default downloads path for linux or windows """
 
