@@ -405,8 +405,8 @@ class tab():
         (called by timeTwoUsers) """
 
         self.twoUserViewReq.setVisible(True)
-        validTime, self.validResponse = self.getTime(self.addParameter.text, self.addValid.text, self.addAverage.text)
-        invalidTime, self.invalidResponse = self.getTime(self.addParameter.text, self.addInvalid.text, self.addAverage.text)
+        validTime, self.validRequest, self.validResponse = self.getTime(self.addParameter.text, self.addValid.text, self.addAverage.text)
+        invalidTime, self.invalidRequest, self.invalidResponse = self.getTime(self.addParameter.text, self.addInvalid.text, self.addAverage.text)
         self.showResults.text = "Valid username: " + self.addValid.text + "\t Time: "
         self.showResults.text += str(validTime) + "\n"
         self.showResults.text += "Invalid username: " + self.addInvalid.text + "\t Time: "
@@ -435,7 +435,7 @@ class tab():
             # divides the file to a list of usernames
             self.userList = readFile.split(self.addSeparatorList.text)
 
-            # set all the buttons to visible
+            # set all the list buttons to visible
             self.downloadResultList.setVisible(True)
             self.listViewResults.setVisible(True)
             self.listViewReq.setVisible(True)
@@ -456,13 +456,19 @@ class tab():
         self.listViewReq.setVisible(True)
         self.showResultsList.text = ""
         self.listResponses = ""
+        self.listRequests = ""
         helpers = self.callbacks.getHelpers()
         for index, username in enumerate(self.userList):
             self.showResultsList.text += "Username: " + username + "\t Time: "
-            time, response = self.getTime(self.addParameterList.text, username, self.addAverageList.text)
+            time, request, response = self.getTime(self.addParameterList.text, username, self.addAverageList.text)
             self.showResultsList.text += str(time) + "\n"
+
             self.listResponses += ":: Response " + str(index) + " ::\n" + "Username: " + username + "\n\n"
             self.listResponses += helpers.bytesToString(response) + "\n\n\n\n\n"
+
+            self.listRequests += ":: Request " + str(index) + " ::\n" + "Username: " + username + "\n\n"
+            self.listRequests += helpers.bytesToString(request) + "\n\n\n\n\n"
+
         self.listResults = self.showResultsList.text
         return
 
@@ -507,9 +513,11 @@ class tab():
             makeRequest.getResponse()
             getTime += time.clock() - start
 
-        response = self.callbacks.makeHttpRequest(httpService, newRequest).getResponse()
+        makeRequest = self.callbacks.makeHttpRequest(httpService, newRequest)
+        request = makeRequest.getRequest()
+        response = makeRequest.getResponse()
         # return the response
-        return getTime / numTries, response
+        return getTime / numTries, request, response
 
 
     ####################################################
@@ -520,7 +528,7 @@ class tab():
     def showListRequest(self, event):
         """ Method that shows the request from a file of usernames """
         helpers = self.callbacks.getHelpers()
-        self.showResultsList.text = helpers.bytesToString(self.curRequest.getRequest())
+        self.showResultsList.text = self.listRequests
 
     def showListResults(self, event):
         """ Show results for list """
@@ -537,7 +545,10 @@ class tab():
     def showRequestTop(self, event):
         """ Show request on top """
         helpers = self.callbacks.getHelpers()
-        self.showResults.text = helpers.bytesToString(self.curRequest.getRequest())
+        self.showResults.text = ":: Valid Request :: \n"
+        self.showResults.text += helpers.bytesToString(self.validRequest)
+        self.showResults.text += "\n\n\n:: Invalid Request :: \n"
+        self.showResults.text += helpers.bytesToString(self.invalidRequest)
 
     def showValidResponseTop(self, event):
         """ Show valid response on top """
