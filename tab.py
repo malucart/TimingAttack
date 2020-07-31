@@ -69,7 +69,7 @@ class tab():
     ###########################
 
     def createTabGUI(self):
-
+        """ Create GUI for this tabbed pane """
         # panel for the whole tab
         self.firstTab = JPanel()
 
@@ -151,7 +151,7 @@ class tab():
         self.viewDebug = JButton("View debug output", actionPerformed=self.showDebug)
         self.debugText = swing.JTextArea("")
         self.debugText.setVisible(False)
-        debugTextScroll = swing.JScrollPane(self.debugText)
+        self.debugTextScroll = swing.JScrollPane(self.debugText)
 
         # layout
         layout = swing.GroupLayout(self.firstTab)
@@ -216,7 +216,7 @@ class tab():
                                 .addGroup(layout.createParallelGroup(swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(self.listViewReq)))
                             .addGap(10)
-                            .addComponent(debugTextScroll, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE))))))
+                            .addComponent(self.debugTextScroll, swing.GroupLayout.PREFERRED_SIZE, 300, swing.GroupLayout.PREFERRED_SIZE))))))
 
 
         layout.setVerticalGroup(
@@ -322,325 +322,9 @@ class tab():
                         .addGap(10)
                         .addComponent(self.viewDebug)
                         .addGap(10)
-                        .addComponent(debugTextScroll, swing.GroupLayout.PREFERRED_SIZE, 150, swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(self.debugTextScroll, swing.GroupLayout.PREFERRED_SIZE, 150, swing.GroupLayout.PREFERRED_SIZE)))))
         return
 
-
-        """ Create GUI for this tabbed pane """
-        # create main panel to the whole layout
-        """
-        self.firstTab = JPanel()
-        self.firstTab.layout = BorderLayout()
-
-        # create a big box to organize the layout inside of it
-        pagebox = Box.createVerticalBox()
-
-        # create a box for the title of the layout
-        toptitle = Box.createHorizontalBox()
-        pagebox.add(toptitle)
-        title = self.createTopTitle()
-        toptitle.add(title)
-
-        # create a box for top-half area and add to the page
-        tophalf = Box.createHorizontalBox()
-        pagebox.add(tophalf)
-
-        # create top-left and top-right boxes
-        topleft = self.createTopLeftBox()
-        topright = self.createTopRightBox()
-        # add top-left and top-right boxes to top half
-        tophalf.add(topleft)
-        tophalf.add(topright)
-
-        # draw a horizontal line right after top-half box
-        sep = JSeparator()
-        pagebox.add(sep)
-
-        # create a box for bottom-half area and add to the page
-        bottomhalf = Box.createHorizontalBox()
-        pagebox.add(bottomhalf)
-
-        # create bottom-left and bottom-right boxes
-        bottomleft = self.createBottomLeftBox()
-        bottomright = self.createBottomRightBox()
-        # add bottom-left and bottom-right boxes to bottom-half
-        bottomhalf.add(bottomleft)
-        bottomhalf.add(bottomright)
-
-        # draw a horizontal line after bottom-half box
-        sep = JSeparator()
-        pagebox.add(sep)
-
-
-        # create a box for debugging output and add to page
-        debugbox = self.createDebugBox()
-        pagebox.add(debugbox)
-
-
-        # timing attack tab adds the big box
-        self.firstTab.add(pagebox)
-
-        # the whole tab is returned
-        return self.firstTab
-
-
-    def createTopTitle(self):
-        toptitle = self.getBorderVertBox()
-        title = JPanel()
-        self.addTitle("Timing Attack", title)
-        toptitle.add(title)
-        toptitle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return toptitle
-
-
-    def createTopLeftBox(self):
-        # Method to create the top left box
-        topleft = self.getBorderVertBox()
-
-        # title for the top-left area
-        self.addTitle("Enter a Valid and an Invalid Username", topleft)
-
-        # create a box for label and valid username input
-        boxHor = Box.createHorizontalBox()
-
-        # create a label for valid username into the box
-        self.addLabel("Valid username: ", boxHor)
-
-        # create input for valid username
-        self.validUser = JTextField("", 30)
-
-        # the box adds the valid username input
-        boxHor.add(self.validUser)
-
-        # top-left box adds this box
-        topleft.add(boxHor)
-
-        # create a box for an invalid username input
-        boxHor = Box.createHorizontalBox()
-
-        # create a label for an invalid username into the box
-        self.addLabel("Invalid username: ", boxHor)
-
-        # create input for invalid username
-        self.invalidUser = JTextField("", 30)
-
-        # the box adds the invalid username input
-        boxHor.add(self.invalidUser)
-
-        # top-left box adds this box
-        topleft.add(boxHor)
-
-        # create a box for the parameter input
-        boxHor = Box.createHorizontalBox()
-
-        # create a label for the parameter into the box
-        self.addLabel("Enter parameter: ", boxHor)
-
-        # create input for parameter
-        self.parameterName = JTextField("", 30)
-
-        # the box adds the parameter input
-        boxHor.add(self.parameterName)
-
-        # top-left box adds this box
-        topleft.add(boxHor)
-        # create new horizontal box for number of tries
-        boxHor = Box.createHorizontalBox()
-
-        # create a label for the number of tries into the box
-        self.addLabel("How many tries would you like to average: ", boxHor)
-
-        # create input for number of tries
-        self.numTries = JTextField("", 30)
-
-        # the box adds the number of tries input
-        boxHor.add(self.numTries)
-
-        # top-left box adds this box
-        topleft.add(boxHor)
-
-        # "submit" button is created and added into the top-left box
-        submit = JButton("submit", actionPerformed=self.timeTwoUsers)
-        topleft.add(submit)
-
-        return topleft
-
-
-    def createTopRightBox(self):
-        # Method to create the top right box
-        topright = self.getBorderVertBox()
-
-        # title for the top-right area
-        self.addTitle("Results", topright)
-
-        # show results in a text area
-        self.getResults = JTextArea("", 50, 30)
-
-        # results are not editable
-        self.getResults.setEditable(False)
-
-        # top-right adds this text area
-        topright.add(self.getResults)
-
-        # "view the request" button is created and added into the top-right box
-        self.showRequestTopIsOn = False
-        self.twoUserResultOutput = ""
-        self.twoUserViewReq = JButton("View the request", actionPerformed=self.showRequestTop)
-        topright.add(self.twoUserViewReq)
-
-        return topright
-
-
-    def createBottomLeftBox(self):
-        # Method to create the bottom left box
-        bottomleft = self.getBorderVertBox()
-        # title for the bottom-left area
-        self.addTitle("Input Username File", bottomleft)
-
-        # creates a box to input a list of usernames (txt file)
-        boxHor = Box.createHorizontalBox()
-        self.addLabel("Input file: ", boxHor)
-        self.inputFile = JButton("Choose file...", actionPerformed=self.chooseFile)
-        boxHor.add(self.inputFile)
-        # bottom-left box adds this box
-        bottomleft.add(boxHor)
-
-        # creates a box to input a parameter separator
-        boxHor = Box.createHorizontalBox()
-        self.addLabel("Enter parameter separator: ", boxHor)
-        self.paramSeparator = JTextField("", 30)
-        boxHor.add(self.paramSeparator)
-        # bottom-left box adds this box
-        bottomleft.add(boxHor)
-
-        # creates a box to input a parameter
-        boxHor = Box.createHorizontalBox()
-        self.addLabel("Enter parameter: ", boxHor)
-        self.fileParameterName = JTextField("", 30)
-        boxHor.add(self.fileParameterName)
-        # bottom-left box adds this box
-        bottomleft.add(boxHor)
-
-        boxHor = Box.createHorizontalBox()
-        # create a label for the number of tries into the box
-        self.addLabel("How many tries would you like to average: ", boxHor)
-
-        # create input for number of tries
-        self.listNumTries = JTextField("", 30)
-
-        # the box adds the number of tries input
-        boxHor.add(self.listNumTries)
-
-        # top-left box adds this box
-        bottomleft.add(boxHor)
-
-        # "submit" button is created and added into the bottom-left box
-        submit = JButton("submit", actionPerformed=self.timeUserList)
-        self.fileSubmitError = JLabel("")
-        bottomleft.add(submit)
-        bottomleft.add(self.fileSubmitError)
-
-        return bottomleft
-
-
-    def createBottomRightBox(self):
-        # Method to create the bottom right box
-        bottomright = self.getBorderVertBox()
-
-        # title for the bottom-right area
-        self.addTitle("Results", bottomright)
-
-        # show results about of each username from txt file
-        self.getListResults = JTextArea("", 50, 30)
-
-        # results are not editable
-        self.getListResults.setEditable(False)
-
-        # results are scrollable
-        getListResultsContainer = JScrollPane(self.getListResults)
-
-        # these results scrollable are added into the bottom-right
-        bottomright.add(getListResultsContainer)
-
-        # create a box to store the buttons funcinalities in the bottom-right area
-        boxHor = Box.createHorizontalBox()
-
-        # "download results" button to download the results
-        downRes = JButton("Download results", actionPerformed=self.downloadResults)
-
-        # box adds this button
-        boxHor.add(downRes)
-
-        # "view the request" button
-        self.showListRequestIsOn = False
-        self.listResultOutput = ""
-
-        # create a button
-        self.listViewReq = JButton("View the request", actionPerformed=self.showListRequest)
-
-        # box adds this button
-        boxHor.add(self.listViewReq)
-
-        # bottom-right box adds the box which stores the buttons funcinalities
-        bottomright.add(boxHor)
-
-        return bottomright
-
-
-    def createDebugBox(self):
-        # Method to create the debug box
-        debugbox = self.getBorderVertBox()
-        horizontaldebug = Box.createHorizontalBox()
-
-        # create label for this endding section
-        self.addLabel("Something went wrong?", horizontaldebug)
-
-        # button to view debug output
-        self.debugOn = False
-        self.viewDebug = JButton("View debug output", actionPerformed=self.showDebug)
-        horizontaldebug.add(self.viewDebug)
-        debugbox.add(horizontaldebug)
-
-        horizontaldebug = Box.createHorizontalBox()
-        # create a box that shows the debug output
-        self.debugText = JTextArea("", 50, 1)
-        self.debugText.setVisible(False)
-        # box adds this button
-        horizontaldebug.add(self.debugText)
-        debugbox.add(horizontaldebug)
-
-        return debugbox
-
-
-    def getBorderVertBox(self):
-        # Method that creates box with a border (padding)
-        to put other JComponents in
-        boxVert = Box.createVerticalBox()
-        bord = EmptyBorder(10, 10, 10, 10)
-        boxVert.setBorder(bord)
-        return boxVert
-
-    def addLabel(self, text, box):
-        # Method that creates a label and adds it to a box
-        labelArea = JLabel(text)
-        box.add(labelArea)
-        labelArea.setAlignmentX(Component.LEFT_ALIGNMENT)
-        return
-
-
-    def addTitle(self, text, box):
-        # Method that adds titles for boxes
-        # Create orange color variable
-        orange = Color(16737843)
-        # Create font for titles
-        titlefont = Font("Tahoma", 1, 14)
-        # Create title
-        labelArea = JLabel(text)
-        labelArea.setForeground(orange)
-        labelArea.setFont(titlefont)
-        box.add(labelArea)
-        return
-"""
 
     def chooseFile(self, event):
         # Method that allows the user to choose a file of usernames
@@ -847,7 +531,7 @@ class tab():
     def debugOutput(self, message):
         # Write a debug message in the debug box
         self.debugText.text = message
-        self.debugText.text = setVisible(True)
+        self.debugText.setVisible(True)
         self.viewDebug.setText("Close Debug Output")
         self.debugOn = True
 
