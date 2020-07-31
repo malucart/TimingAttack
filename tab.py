@@ -144,6 +144,11 @@ class tab():
         self.listViewResults = JButton("View Results", actionPerformed=self.showListResults)
         self.listViewReq = JButton("View Request", actionPerformed=self.showListRequest)
         self.listViewResponses = JButton("View Responses", actionPerformed=self.showListResponses)
+        # Set list buttons to invisible until a request is submitted
+        self.downloadResultList.setVisible(False)
+        self.listViewResults.setVisible(False)
+        self.listViewReq.setVisible(False)
+        self.listViewResponses.setVisible(False)
 
         # something wrong?
         self.somethingWrong = JLabel("Something Wrong?")
@@ -430,6 +435,11 @@ class tab():
             # divides the file to a list of usernames
             self.userList = readFile.split(self.addSeparatorList.text)
 
+            # set all the buttons to visible
+            self.downloadResultList.setVisible(True)
+            self.listViewResults.setVisible(True)
+            self.listViewReq.setVisible(True)
+            self.listViewResponses.setVisible(True)
             # gets the time for each username
             threading.Thread(target=self.getUserListTimes).start()
 
@@ -583,7 +593,6 @@ class tab():
 
         self.debugText.text = message
 
-        # self.debugText.setVisible(True)
         self.debugTextScroll.setVisible(True)
         self.viewDebug.setText("Close Debug Output")
         self.debugOn = True
@@ -593,13 +602,11 @@ class tab():
         """ Open or close debug box """
 
         if self.debugOn:
-            # self.debugText.setVisible(False)
             self.debugTextScroll.setVisible(False)
             self.viewDebug.setText("View Debug Output")
             self.debugOn = False
             self.debugText.text = ""
         else:
-            # self.debugText.setVisible(True)
             self.debugTextScroll.setVisible(True)
             self.viewDebug.setText("Close Debug Output")
             self.debugOn = True
