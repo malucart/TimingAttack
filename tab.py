@@ -58,11 +58,9 @@ class tab():
     def getFirstTab(self):
         """ Get the JPanel that represents the object's
         Timing Attack tab """
-        self.scrollPane = JScrollPane(
-                            self.firstTab,
-                            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-                            )
+        self.scrollPane = JScrollPane(self.firstTab,
+                                      JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
         return self.scrollPane
 
 

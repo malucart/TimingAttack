@@ -71,7 +71,9 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
 
 
     def getUiComponent(self):
-        """ Burp Suite uses this method to obtain the component that should be used as the contents of the custom tab when it is displayed """
+        """ Burp Suite uses this method to obtain the
+        component that should be used as the contents
+        of the custom tab when it is displayed """
         return self.tab
 
 
