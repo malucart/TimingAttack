@@ -141,11 +141,12 @@ class tab():
         self.showResultsList = JTextArea("")
         self.showResultsList.setEditable(False)
         self.showResultsListScroll = JScrollPane(self.showResultsList)
-        self.downloadResultList = JButton("Download Results", actionPerformed=self.downloadResults)
+        self.downloadResultList = JButton("Download Display", actionPerformed=self.downloadResults)
         self.showListRequestIsOn = False
         self.listResultOutput = ""
         self.listViewResults = JButton("View Results", actionPerformed=self.showListResults)
         self.listViewReq = JButton("View Request", actionPerformed=self.showListRequest)
+        self.listViewResponses = JButton("View Responses", actionPerformed=self.showListResponses)
 
         # something wrong?
         self.somethingWrong = JLabel("Something Wrong?")
@@ -229,7 +230,10 @@ class tab():
                                     .addComponent(self.listViewResults))
                                 .addGap(15)
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                    .addComponent(self.listViewReq)))
+                                    .addComponent(self.listViewReq))
+                                .addGap(15)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addComponent(self.listViewResponses)))
                             .addGap(10)
                             .addComponent(self.debugTextScroll, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE))))))
 
@@ -335,7 +339,9 @@ class tab():
                             .addGap(10)
                             .addComponent(self.listViewResults)
                             .addGap(10)
-                            .addComponent(self.listViewReq)))
+                            .addComponent(self.listViewReq)
+                            .addGap(10)
+                            .addComponent(self.listViewResponses)))
                     .addGap(30)
                 # something wrong section
                 .addGroup(layout.createSequentialGroup()
@@ -367,7 +373,7 @@ class tab():
         self.chooser.setFileFilter(filter)
         returnVal = self.chooser.showOpenDialog(self.chooser)
         if(returnVal == JFileChooser.APPROVE_OPTION):
-            self.inputFile.text = self.chooser.getSelectedFile().getName()
+            self.inputFileButton.text = self.chooser.getSelectedFile().getName()
 
 
     ##################################
@@ -427,10 +433,6 @@ class tab():
             # divides the file to a list of usernames
             self.userList = readFile.split(self.addSeparatorList.text)
 
-            # change button to say show request
-            self.showListRequestIsOn = False
-            self.listViewReq.setText("View the Request")
-
             # gets the time for each username
             threading.Thread(target=self.getUserListTimes).start()
 
@@ -448,11 +450,12 @@ class tab():
         self.showResultsList.text = ""
         self.listResponses = ""
         helpers = self.callbacks.getHelpers()
-        for i in self.userList:
-            self.showResultsList.text += "Username: " + i + "\t Time: "
-            time, response = self.getTime(self.addParameterList.text, i, self.addAverageList.text)
+        for index, username in enumerate(self.userList):
+            self.showResultsList.text += "Username: " + username + "\t Time: "
+            time, response = self.getTime(self.addParameterList.text, username, self.addAverageList.text)
             self.showResultsList.text += str(time) + "\n"
-            self.listResponses += helpers.bytesToString(response) + "\n\n\n"
+            self.listResponses += ":: Response " + str(index) + " ::\n" + "Username: " + username + "\n\n"
+            self.listResponses += helpers.bytesToString(response) + "\n\n\n\n\n"
         self.listResults = self.showResultsList.text
         return
 
@@ -516,6 +519,9 @@ class tab():
         """ Show results for list """
         self.showResultsList.text = self.listResults
 
+    def showListResponses(self, event):
+        """ Show responses for list """
+        self.showResultsList.text = self.listResponses
 
     def showRequest(self, box, button, output, bool):
         """ Switch from view request to view result and vice versa """
