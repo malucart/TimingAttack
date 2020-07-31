@@ -107,18 +107,16 @@ class tab():
         self.showResults.setEditable(False)
         self.showResultsScroll = JScrollPane(self.showResults)
         self.twoUserResultOutput = ""
-        self.twoUserViewResult = swing.JButton("View Results", actionPerformed=self.showResultsTop)
-        self.twoUserViewReq = swing.JButton("View the Request", actionPerformed=self.showRequestTop)
-        self.twoUserViewValidResponse = swing.JButton("View Valid Response", actionPerformed=self.showValidResponseTop)
-        self.twoUserViewInvalidResponse = swing.JButton("View Invalid Response", actionPerformed=self.showInvalidResponseTop)
+        self.twoUserViewResult = JButton("View Results", actionPerformed=self.showResultsTop)
+        self.twoUserViewReq = JButton("View the Request", actionPerformed=self.showRequestTop)
+        self.twoUserViewValidResponse = JButton("View Valid Response", actionPerformed=self.showValidResponseTop)
+        self.twoUserViewInvalidResponse = JButton("View Invalid Response", actionPerformed=self.showInvalidResponseTop)
         # Set top buttons to invisible until a request is submitted
         self.twoUserViewResult.setVisible(False)
         self.twoUserViewReq.setVisible(False)
         self.twoUserViewValidResponse.setVisible(False)
         self.twoUserViewInvalidResponse.setVisible(False)
 
-        # separator
-        self.bar = swing.JSeparator(swing.SwingConstants.HORIZONTAL)
 
         # labels, inputs and file on bottom half
         self.addTitleFile = JLabel("Input Username File")
