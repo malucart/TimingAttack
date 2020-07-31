@@ -1,11 +1,10 @@
 """
 Name:           Timing Attack
-Date:           7/29/2020
+Date:           7/31/2020
 Author:         inbarmada & louisa
-Description:    TimingAttack is open source plugin to help pentesters for guessing if a username is valid or not by how long time
-                the system takes to respond to an fail authentication. And then, comparing that to how long the system takes to
-                respond for a valid login. It means that if attackers can guess one valid username, then they can guess much more
-                using the same technique. Best part of it, it is totally automated by the attacker.
+Description:    TimingAttack is open source plugin to help pentesters for guessing if a username is valid or not by how long
+                the system takes to respond for a success and a fail authenticationto. It means that if attackers can guess
+                one valid username, then they can guess much more using the same technique.
 Copyright (c) 2020, louisa & inbarmada
 All rights reserved.
 Please see the attached LICENSE file for additional licensing information.
@@ -15,12 +14,12 @@ from burp import IBurpExtender # for the extension
 from burp import ITab # for creating an extension tab
 from burp import IExtensionHelpers # for helper methods
 from burp import IContextMenuFactory # for adding an option to the right click popup menu
+from javax import swing # mainly library for UI
 from javax.swing import JPanel # for panels
 from javax.swing import JTabbedPane # for tabbed pane in popup dialog
 from javax.swing import JMenuItem # for adding menu choices to add a new issue
 from java.awt import BorderLayout # for panel layouts
 from java.awt import Color # for setting a different background on disabled text areas
-from java.awt import Font # for adding bold font to text labels in main tab
 from java.util import ArrayList # for arraylist
 import sys # provides access to some variables used by the interpreter and to functions that interact strongly with the interpreter
 import time # for clock time
@@ -40,6 +39,7 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
 
     def registerExtenderCallbacks(self, callbacks):
         """ Implement IBurpExtender when the extension is loaded """
+
         print "Loading timing attack extension\n"
 
         # required for easier debugging: https://github.com/securityMB/burp-exceptions
@@ -67,6 +67,7 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
 
     def getTabCaption(self):
         """ Burp Suite uses this method to obtain the caption that should appear on the custom tab when it is displayed """
+
         return "Timing Attack"
 
 
@@ -74,11 +75,13 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
         """ Burp Suite uses this method to obtain the
         component that should be used as the contents
         of the custom tab when it is displayed """
+
         return self.tab
 
 
     def createGUI(self):
-        """ Create overall UI for extension, with an inner tab """
+        """ Create overall UI for the extension, with an inner tab """
+
         # create the panel that border layout lays out a container, arranging and resizing its components to fit
         self.tab = JPanel(BorderLayout())
 
@@ -96,11 +99,11 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
     def createMenuItems(self, invocation):
         """ Create a menu item on other tabs to allow them to send
         requests to Timing Attack """
+
         self.context = invocation
         menuList = ArrayList()
         self.messageList = invocation.getSelectedMessages()
         menuItem = JMenuItem("Send to Timing Attack", actionPerformed = self.requestSent)
-        # JMenuItem("New",actionPerformed = OnClick)
         menuList.add(menuItem)
         return menuList
 
@@ -108,7 +111,9 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
     def requestSent(self, event):
         """ A request sent from another tab to the Timing Attack (called
         when another tab presses the menu item from createMenuItems) """
+
         messageList = self.messageList
+
         # highlight timing attack tab
         self.highlightTab()
 
@@ -129,16 +134,18 @@ class BurpExtender(IBurpExtender, ITab, IExtensionHelpers, IContextMenuFactory):
     def highlightTab(self):
         """ Highlight the Timing Attack tab when a request is sent
         (called by requestSent) """
+
         parentTabbedPane = self.getUiComponent().getParent()
         if (parentTabbedPane != None):
             for i in range(parentTabbedPane.getTabCount()):
                 if parentTabbedPane.getComponentAt(i) == self.getUiComponent():
-                    parentTabbedPane.setBackgroundAt(i, Color(16737843));
+                    parentTabbedPane.setBackgroundAt(i, Color(255,102,51));
                     threading.Timer(5, self.unHighlightTab, [i]).start()
 
 
     def unHighlightTab(self, componentNum):
         """ Unhighlight Timing Attack tab after 5 seconds """
+
         parentTabbedPane = self.getUiComponent().getParent()
         parentTabbedPane.setBackgroundAt(componentNum, Color(000000));
 
