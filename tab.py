@@ -24,6 +24,8 @@ from javax.swing import JButton # for buttons
 from javax.swing import JSeparator # for implementing divider lines
 from javax.swing import JFileChooser # for importing and exporting file chooser
 from javax.swing import GroupLayout # for adding all groups
+from javax.swing import ButtonGroup
+from javax.swing import JRadioButton
 from javax.swing.filechooser import FileNameExtensionFilter # for importing and exporting
 from javax.swing.border import EmptyBorder # for an empty/transparent border
 from javax.swing import SwingConstants # for positioning and orienting components on the screen
@@ -503,7 +505,8 @@ class tab():
             self.debugOutput("Parameter " + paramName + " cannot be found in request")
         # it builds an http service to send a request to the website
         httpService = self.curRequest.getHttpService()
-        httpService = helpers.buildHttpService(httpService.getHost(), httpService.getPort(), False)
+        useHttps = True if httpService.getProtocol() == "https" else False
+        httpService = helpers.buildHttpService(httpService.getHost(), httpService.getPort(), useHttps)
 
         getTime = 0
         for i in range(numTries):
