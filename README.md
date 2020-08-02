@@ -21,7 +21,7 @@ On Burp Suite extension, navigate to the "Extender" tab. Click the "add" button 
 To use the extension, you must intercept an HTTP request that sends with it a username. Once you find this request in proxy, right-click to see a menu pop up, and then click "Send to Timing Attack". If you open the Timing Attack tab now, you will see the request in the two boxes on the right side of the screen.
 ![Clicking "Send to Timing Attack"](Screenshots/Send-to-timing-attack.png)
 #### Valid and invalid usernames
-In looking at timing attacks, it is often useful to compare the difference in the time to get a response for a valid username against an invalid username. To do that in this extension, simply enter the valid and invalid usernames in the labeled fields. Then, enter the name of the username parameter used in the request in the "enter parameter" field. Finally, because it is often more useful to average how long it took to get a response from several tries, enter how many tries you want to average right below, and submit. 
+In looking at timing attacks, it is often useful to compare the difference in the time to get a response for a valid username against an invalid username. To do that in this extension, simply enter the valid and invalid usernames in the labeled fields. Then, enter the name of the username parameter used in the request in the "enter parameter" field. Finally, because it is often more useful to average how long it took to get a response from several tries, enter how many tries you want to average right below, and submit.
 ![Right before submitting](Screenshots/Before-submitting.png)
 After submitting, you should see the results of the timing attack the right side of the screen. You should also see several buttons pop up, which will allow you to look at the request and the responses.
 ![Buttons](Screenshots/top-buttons.png)
@@ -30,3 +30,10 @@ Sometimes you might want to check how long each username in a list of usernames 
 ![List of responses](Screenshots/response-list.png)
 ## Setting up the Testing Site
 Want to test this extension on our website first? This is how you set up a testing site:
+1. Download the website folder
+2. Use Xampp, if you don't have it, follow this video by Dani Krossing: https://www.youtube.com/watch?v=mXdpCRgR-xE
+3. The info about the database is found in website/includes/dbh.inc.php. Basically:
+$servername = "localhost";
+$dBUsername = "root";
+$dBPassword = "abc123";
+$dBName = "webserverdb";
