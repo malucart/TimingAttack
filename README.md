@@ -37,4 +37,5 @@ $servername = "localhost";
 $dBUsername = "root";
 $dBPassword = "abc123";
 $dBName = "webserverdb";
-4. Open website/index.php on browser.
+4. Open website/index.php on browser. It should be like that:
+![Website Design](Screenshots/webisite.png)
