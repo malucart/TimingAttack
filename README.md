@@ -31,7 +31,7 @@ Sometimes you might want to check how long each username in a list of usernames 
 ## Setting up the Testing Site
 Want to test this extension on our website first? This is how you set up a testing site:
 1. Download the website folder;
-2. Use Xampp, if you don't have it, follow this video by Dani Krossing: https://www.youtube.com/watch?v=mXdpCRgR-xE;
+2. Use Xampp, if you don't have it, follow this video: https://www.youtube.com/watch?v=mXdpCRgR-xE;
 3. The info about the database is found in website/includes/dbh.inc.php. Basically:
 $servername = "localhost";
 $dBUsername = "root";
