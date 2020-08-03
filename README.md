@@ -32,16 +32,7 @@ Sometimes you might want to check how long each username in a list of usernames 
 Want to test this extension on our website first? This is how you set up a testing site:
 1. Download the website folder
 2. Use Xampp, if you don't have it, follow this video: https://www.youtube.com/watch?v=mXdpCRgR-xE
-3. The info about the database is found in website/includes/dbh.inc.php. Basically:
-
-$servername = "localhost"
-
-$dBUsername = "root"
-
-$dBPassword = "abc123"
-
-$dBName = "webserverdb"
-
+3. The info about the database is found in website/includes/dbh.inc.php. Basically: <br>$servername = "localhost"<br>$dBUsername = "root"<br>$dBPassword = "abc123"<br>$dBName = "webserverdb"
 4. The folder should be into the Xampp folder too, in my case it is found in C:\xampp\htdocs\phplessons\myfirstphp. On browser, it shows up as localhost/phplessons/myfirstphp/index.php. And, it should be like this:
 
 ![Website Design](Screenshots/website.png)
