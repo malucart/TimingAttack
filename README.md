@@ -38,4 +38,5 @@ $dBUsername = "root";
 $dBPassword = "abc123";
 $dBName = "webserverdb";
 4. The folder should be into the Xampp folder too, in my case it is found in C:\xampp\htdocs\phplessons\myfirstphp. On browser, it shows up as localhost/phplessons/myfirstphp/index.php. And, it should be like this:
+
 ![Website Design](Screenshots/website.png)
