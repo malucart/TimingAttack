@@ -15,7 +15,7 @@ if (isset($_POST['login-submit'])) {
         exit();
     } else {
         $sql = "SELECT * FROM users WHERE uidUsers=?;";
-        // conection initialized 
+        // conection initialized
         $stmt = mysqli_stmt_init($conn);
         // if something fails
         if (!mysqli_stmt_prepare($stmt, $sql)) {
